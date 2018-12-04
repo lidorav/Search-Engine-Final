@@ -1,5 +1,6 @@
 package Model.Read;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,6 +20,7 @@ public class ReadFile implements Runnable {
     //constructor
     public ReadFile(String path, BlockingQueue bq){
         corpus = new File(path);
+        City.loadCities();
         docMap = new ConcurrentHashMap<>();
         parse_read = bq;
     }
@@ -30,13 +32,15 @@ public class ReadFile implements Runnable {
 
     public void read() {
         for (File dir : corpus.listFiles()) {
+            if(dir.getName().equals("stop_words.txt"))
+                continue;
             for (File file : dir.listFiles()) {
                 try {
                     System.out.println(file.getName());
                     Document doc = Jsoup.parse(file, "UTF-8");
                     Elements documents = doc.getElementsByTag("DOC");
+                    int i = 0;//mark the place of the doc in the file
                     for (Element element : documents) {
-                        int i = 0;//mark the place of the doc in the file
                         String docNum = element.getElementsByTag("DOCNO").get(0).text();
 
                         //check if title/headline exists and retrieve from document
@@ -50,6 +54,7 @@ public class ReadFile implements Runnable {
 
                         //check if city exists and retrieve from document
                         String docCity = "";
+                        String docLanguage = "";
                         Elements docCityElement = element.getElementsByTag("F");
                         if (!docCityElement.isEmpty()) {
                             if (docCityElement.eachAttr("p").contains("104")) {
@@ -58,7 +63,10 @@ public class ReadFile implements Runnable {
                                     Element elem = (Element) iter.next();
                                     if (elem.attributes().get("p").equals("104"))
                                         docCity = elem.text();
+                                    if(elem.attributes().get("p").equals("105"))
+                                        docLanguage = elem.text();
                                 }
+                                docCity = StringUtils.stripStart(docCity,null);
                                 String[] parts = docCity.split(" ");
                                 docCity = parts[0].toUpperCase();
                             }
@@ -75,18 +83,16 @@ public class ReadFile implements Runnable {
                         if (docTextElement.isEmpty())
                             continue;
                         String data = element.getElementsByTag("TEXT").get(0).text();
-                        Model.Document modelDoc = new Model.Document(file.getName(), docTitle, i++, docCity, docDate, data, docNum);
+                        Model.Document modelDoc = new Model.Document(file.getName(), docTitle, i++, docCity, docDate, data, docNum, docLanguage);
                         docMap.put(docNum, modelDoc);
                         //send document data for parsing
                         parse_read.put(modelDoc);
-
                     }
                 } catch (Exception e) {
                     System.out.println(e + "error");
                 }
             }
             //after file is complete we deploy it to the posting file
-
         }
         try {
             //parser.shutDownExecutor();

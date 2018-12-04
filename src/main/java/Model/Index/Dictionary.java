@@ -8,9 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Dictionary {
 
+    private String path;
     private static ConcurrentHashMap<String, PostTerm> dictionary;
 
-    public Dictionary(){
+    public Dictionary(String path){
+        this.path = path;
         dictionary = new ConcurrentHashMap<>();
     }
 
@@ -36,7 +38,7 @@ public class Dictionary {
     void printDic() {
         PrintWriter outputfile = null;
         try {
-            outputfile = new PrintWriter("D:\\Dic.txt");
+            outputfile = new PrintWriter(path+"\\Dic.txt");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

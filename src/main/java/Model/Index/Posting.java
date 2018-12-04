@@ -1,5 +1,7 @@
 package Model.Index;
 
+import Model.Read.City;
+
 import java.io.*;
 import java.util.LinkedList;
 import java.util.Map;
@@ -8,11 +10,12 @@ import java.util.TreeMap;
 
 public class Posting {
 
-    private String path = "D:\\Posting";
-    private static int fileID = 1;
+    private String path;
+    private static int fileID=1;
     private Queue<String> postingQueue;
 
-    public Posting() {
+    public Posting(String path) {
+        this.path = path;
         postingQueue = new LinkedList();
     }
 
@@ -88,5 +91,37 @@ public class Posting {
             } catch (Exception e) {
             }
         }
+        fileID=1;
+    }
+
+    public void writeDocIndex(TreeMap<String, StringBuilder> docPost) {
+        PrintWriter outputfile = null;
+        try {
+            outputfile = new PrintWriter(path+"\\documents.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        for (StringBuilder doc : docPost.values()
+        ) {
+            outputfile.println(doc);
+        }
+        outputfile.close();
+    }
+
+    public void writeCityIndex(TreeMap<String, StringBuilder> cityPost) {
+        PrintWriter outputfile = null;
+        try {
+            outputfile = new PrintWriter(path+"\\cities.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        for (Map.Entry<String,StringBuilder> city : cityPost.entrySet()
+        ) {
+            String info = City.getCityInfo(city.getKey());
+            outputfile.println(city.getKey() + "-" + info + "-" + city.getValue());
+        }
+        outputfile.close();
     }
 }

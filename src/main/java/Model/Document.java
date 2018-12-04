@@ -2,6 +2,7 @@ package Model;
 
 public class Document {
 
+    private String language;
     private int maxTf;
     private int uniqueTf;
     private String city;
@@ -11,19 +12,34 @@ public class Document {
     private String date;
     private String text;
     private String docID;
+    private String cityOccurence;
 
     public Document(String fileName){
         this.fileName = fileName;
     }
 
-    public Document(String fileName, String title, int position, String city, String date, String data, String docID) {
+    public Document(String fileName, String title, int position, String city, String date, String data, String docID, String language) {
         this.city = city;
+        this.language = language;
         this.fileName = fileName;
         this.title = title;
         this.position= position;
         this.date = date;
         this.text = data;
         this.docID = docID;
+        this.cityOccurence="";
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCityOccurence() {
+        return cityOccurence;
     }
 
     public String getDocID() {
@@ -57,6 +73,10 @@ public class Document {
     }
     public String getText() {
         return text;
+    }
+
+    public void setCityOccurence(String index){
+        cityOccurence = cityOccurence + "," + index;
     }
 
     @Override

@@ -14,8 +14,6 @@ public class Combo {
                 res.append(" ").append(nextToken);
                 Parser.replaceToken(index + counter , nextToken + "!");
                 counter ++;
-                if(counter>=4)
-                    break;
                 nextToken = (Parser.getTokenFromList(index+counter));
             }
             if(counter>1) {

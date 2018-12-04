@@ -9,12 +9,11 @@ import java.util.Set;
 public class StopWords {
 
     private Set<String> stopWordSet = new HashSet<>();
-    private String path="";
 
-    StopWords()  {
+    StopWords(String path)  {
         Scanner file = null;
         try {
-            file = new Scanner(new File("stop_words.txt"));
+            file = new Scanner(new File(path+"\\stop_words.txt"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

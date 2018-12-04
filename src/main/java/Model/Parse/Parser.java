@@ -23,11 +23,11 @@ public class Parser implements Runnable {
     private BlockingQueue<ConcurrentHashMap<String,PreTerm>> indexer_parse;
     private static PorterStemmer porterStemmer;
     private static Pattern pattern;
-    private String docID;
+    private Document doc;
     private static final int bound = 100;
 
-    public Parser(BlockingQueue bqA, BlockingQueue bqB) {
-        stopWord = new StopWords();
+    public Parser(BlockingQueue bqA, BlockingQueue bqB, String stopwordPath) {
+        stopWord = new StopWords(stopwordPath);
         porterStemmer = new PorterStemmer();
         read_parse = bqA;
         indexer_parse = bqB;
@@ -36,7 +36,6 @@ public class Parser implements Runnable {
 
     public void run() {
         try {
-            Document doc;
             //consuming messages until exit message is received
             while(!(doc = read_parse.take()).getFileName().equals("fin")){
                 String docID = doc.getDocID();
@@ -50,14 +49,13 @@ public class Parser implements Runnable {
         }
     }
 
-    public void parse(String docNum, String text) {
+    public void parse(String docID, String text) {
         tempDictionary = new ConcurrentHashMap<>();
-        this.docID = docNum;
         index = 0;
         Splitter splitter = Splitter.on(pattern).omitEmptyStrings();
         tokenList = new ArrayList<>(splitter.splitToList(text));
-        classify();
-        updateDoc();
+        classify(docID);
+        updateDoc(docID);
         try {
             indexer_parse.put(tempDictionary);
         } catch (Exception e) {
@@ -65,7 +63,7 @@ public class Parser implements Runnable {
         }
     }
 
-    private void updateDoc() {
+    private void updateDoc(String docID) {
         int currentMaxValue = Integer.MIN_VALUE;
         Document doc = ReadFile.getDoc(docID);
         doc.setUniqueTf(tempDictionary.size());
@@ -77,7 +75,7 @@ public class Parser implements Runnable {
         doc.setMaxTf(currentMaxValue);
     }
 
-    private void classify() {
+    private void classify(String docID) {
         for (; index < tokenList.size(); index++) {
             String token = getTokenFromList(index);
             if (token.isEmpty() || stopWord.isStopWord(token))
@@ -122,9 +120,9 @@ public class Parser implements Runnable {
         //Date.dateParse(index, token) + Combo.parseCombo(index, token) +
         // Hyphen.parseHyphen(index, token) + Quotation.parseQuotation(index, token)
         String res= Date.dateParse(index, token);
-       //if(res.isEmpty()) {
-           //res = Combo.parseCombo(index, token);
-       //}
+        if(res.isEmpty()) {
+            res = Combo.parseCombo(index, token);
+        }
         if(res.isEmpty()){
             res = Hyphen.parseHyphen(index, token);
         }
@@ -150,10 +148,10 @@ public class Parser implements Runnable {
 
     private void addTerm(String token, String docID) {
         boolean isAtBegin = false;
-        if(token.length()==1 && !StringUtil.isNumeric(token))
-            return;
         token = porterStemmer.stem(token);
         token = cleanToken(token);
+        if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty())
+            return;
         if(index <= bound)
             isAtBegin = true;
         PreTerm term = new PreTerm(token, docID,isAtBegin);
@@ -178,6 +176,11 @@ public class Parser implements Runnable {
 
     static boolean checkExist(String token){
         return tempDictionary.containsKey(token);
+    }
+
+    public void checkCityInDoc(String term){
+        if(doc.getCity().equalsIgnoreCase(term))
+            doc.setCityOccurence(String.valueOf(index));
     }
 
     static void replaceTerm(String currentTerm, String newTerm){

@@ -18,10 +18,9 @@ public class Model {
     }
 
     public void initalizeModel(String corpusPath, String postingPath, boolean toStemm) {
-        ReadFile reader = new ReadFile("D:\\corpus", queueA);
-
-        Parser parser = new Parser(queueA, queueB);
-        Indexer indexer = new Indexer(queueB);
+        ReadFile reader = new ReadFile(corpusPath, queueA);
+        Parser parser = new Parser(queueA, queueB,corpusPath);
+        Indexer indexer = new Indexer(queueB,postingPath);
         long startTime = System.nanoTime();
         Thread t1 = new Thread(reader);
         Thread t2 = new Thread(parser);
@@ -30,9 +29,9 @@ public class Model {
         t2.start();
         t3.start();
         try {
-            t1.join();
-            t2.join();
             t3.join();
+            t2.join();
+            t1.join();
         } catch (Exception e) {
         }
 
