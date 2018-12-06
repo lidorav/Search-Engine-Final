@@ -1,7 +1,5 @@
 package Model;
 
-import Model.Read.ReadFile;
-
 public class PreTerm {
     private String name;
     private String docID;
@@ -9,19 +7,17 @@ public class PreTerm {
     private boolean inTitle;
     private boolean atBeginOfDoc;
 
-    public PreTerm(String name, String docID, boolean atBegin) {
+    public PreTerm(String name, String docID, boolean atBegin,String title) {
         this.name = name;
         this.docID = docID;
         this.tf = 1;
-        isInTitle();
+        isInTitle(title);
         this.atBeginOfDoc = atBegin;
     }
 
-    private void isInTitle(){
+    private void isInTitle(String title){
         //checks if the term is in the title opf the doc
-        Document doc = ReadFile.getDoc(docID);
-        String title = doc.getTitle().toLowerCase();
-        inTitle = title.contains(name.toLowerCase());
+        inTitle = title.toLowerCase().contains(name.toLowerCase());
     }
 
     public String getName() {

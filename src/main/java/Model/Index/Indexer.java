@@ -1,7 +1,6 @@
 package Model.Index;
 
 import Model.Document;
-import Model.Read.ReadFile;
 import Model.PreTerm;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,17 +12,17 @@ public class Indexer implements Runnable {
     private TreeMap<String,StringBuilder> docPost;
     private TreeMap<String,StringBuilder> cityPost;
     private TreeMap<String, StringBuilder> tempPost;
-    private BlockingQueue<ConcurrentHashMap<String, PreTerm>> parser_indexer;
+    private BlockingQueue<Document> parser_indexer;
     private Dictionary dictionary;
     private Posting posting;
     private AtomicInteger counter;
 
-    public Indexer(BlockingQueue bq, String postingPath) {
-        posting = new Posting(postingPath);
+    public Indexer(BlockingQueue bq, boolean toStemm, String postingPath) {
+        posting = new Posting(postingPath, toStemm);
         parser_indexer = bq;
         tempPost = new TreeMap<>();
         cityPost = new TreeMap<>();
-        dictionary = new Dictionary(postingPath);
+        dictionary = new Dictionary(postingPath, toStemm);
         docPost = new TreeMap<>();
         counter = new AtomicInteger(0);
     }
@@ -31,26 +30,28 @@ public class Indexer implements Runnable {
     @Override
     public void run() {
         try {
-            ConcurrentHashMap<String, PreTerm> tempDic;
+            Document doc;
             //con suming messages until exit message is received
-            while (!((tempDic = parser_indexer.take()).isEmpty())) {
+            while (!((doc = parser_indexer.take()).getFileName().equals("fin"))) {
                 boolean newDoc = true;
+                ConcurrentHashMap<String,PreTerm> tempDic = doc.getTermsInDoc();
+                if(tempDic == null)
+                    continue;
                 int i = counter.incrementAndGet();
                 for (Map.Entry<String, PreTerm> entry : tempDic.entrySet()) {
-                    if(i==2000) {
+                    if(i==5000) {
                         posting.initTempPosting(tempPost);
+                        posting.writeDocIndex(docPost);
+                        docPost = new TreeMap<>();
                         tempPost = new TreeMap<>();
                         i=0;
                         counter.set(0);
                     }
                     PreTerm preTerm = entry.getValue();
-                    Document doc = ReadFile.getDoc(preTerm.getDocID());
                     if(newDoc) {
+                        addDocToDocIndex(doc);
                         addDocToCityIndex(doc);
                         newDoc=false;
-                    }
-                    if(!docPost.containsKey(preTerm.getDocID())){
-                        addDocToDocIndex(doc,preTerm);
                     }
                     if (isInTempPosting(entry.getKey())) {
                         StringBuilder sb = tempPost.get(entry.getKey());
@@ -70,8 +71,8 @@ public class Indexer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        posting.initTempPosting(tempPost);
         posting.writeDocIndex(docPost);
+        posting.initTempPosting(tempPost);
         posting.writeCityIndex(cityPost);
         posting.mergePosting();
     }
@@ -92,11 +93,9 @@ public class Indexer implements Runnable {
         }
     }
 
-    private void addDocToDocIndex(Document doc, PreTerm preTerm){
+    private void addDocToDocIndex(Document doc) {
         StringBuilder sb = doc.getDocInfo();
-        docPost.put(preTerm.getDocID(),sb);
-        ReadFile.removeDoc(preTerm.getName());
-        doc = null;
+        docPost.put(doc.getDocID(), sb);
     }
 
     private boolean isInTempPosting(String key) {

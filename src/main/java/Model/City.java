@@ -1,4 +1,4 @@
-package Model.Read;
+package Model;
 
 import com.google.gson.*;
 

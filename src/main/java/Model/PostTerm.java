@@ -47,11 +47,6 @@ public class PostTerm {
 
     @Override
     public String toString() {
-        return "PostTerm{" +
-                "name='" + name + '\'' +
-                ", df=" + df +
-                ", tf=" + tf +
-                ", ptr=" + ptr +
-                '}';
+        return  "{" + df + "," + tf + "," + ptr + "}";
     }
 }

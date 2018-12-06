@@ -1,5 +1,6 @@
 package Model.Read;
 
+import Model.City;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ReadFile implements Runnable {
     private File corpus;
-    private static ConcurrentHashMap<String, Model.Document> docMap;
     private BlockingQueue<Model.Document> parse_read;
 
 
@@ -21,7 +21,6 @@ public class ReadFile implements Runnable {
     public ReadFile(String path, BlockingQueue bq){
         corpus = new File(path);
         City.loadCities();
-        docMap = new ConcurrentHashMap<>();
         parse_read = bq;
     }
 
@@ -31,16 +30,17 @@ public class ReadFile implements Runnable {
     }
 
     public void read() {
+        int counter=0;
         for (File dir : corpus.listFiles()) {
             if(dir.getName().equals("stop_words.txt"))
                 continue;
             for (File file : dir.listFiles()) {
                 try {
-                    System.out.println(file.getName());
                     Document doc = Jsoup.parse(file, "UTF-8");
                     Elements documents = doc.getElementsByTag("DOC");
                     int i = 0;//mark the place of the doc in the file
                     for (Element element : documents) {
+                        counter++;
                         String docNum = element.getElementsByTag("DOCNO").get(0).text();
 
                         //check if title/headline exists and retrieve from document
@@ -72,41 +72,22 @@ public class ReadFile implements Runnable {
                             }
                         }
 
-                        //check if date exists and retrieve from document
-                        String docDate = "";
-                        Elements docDateElement = element.getElementsByTag("DATE");
-                        if (!docDateElement.isEmpty()) {
-                            docDate = docDateElement.get(0).text();
-                        }
                         //check if text exists and retrieve from documenet
+                        String data="";
                         Elements docTextElement = element.getElementsByTag("TEXT");
-                        if (docTextElement.isEmpty())
-                            continue;
-                        String data = element.getElementsByTag("TEXT").get(0).text();
-                        Model.Document modelDoc = new Model.Document(file.getName(), docTitle, i++, docCity, docDate, data, docNum, docLanguage);
-                        docMap.put(docNum, modelDoc);
+                        if (!(docTextElement.isEmpty()))
+                            data = element.getElementsByTag("TEXT").get(0).text();
+                        Model.Document modelDoc = new Model.Document(file.getName(), docTitle, i++, docCity, data, docNum, docLanguage);
                         //send document data for parsing
                         parse_read.put(modelDoc);
                     }
-                } catch (Exception e) {
-                    System.out.println(e + "error");
-                }
+                } catch (Exception e) {}
             }
             //after file is complete we deploy it to the posting file
         }
         try {
-            //parser.shutDownExecutor();
             parse_read.put(new Model.Document("fin"));
-        }catch (Exception e){
-            System.out.println("error queue");
-        }
-    }
-
-    public static Model.Document getDoc(String docID){
-        return docMap.get(docID);
-    }
-
-    public static void removeDoc(String docID){
-        docMap.remove(docID);
+            System.out.println(counter);
+        }catch (Exception e){}
     }
 }

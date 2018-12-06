@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Document {
 
     private String language;
@@ -9,8 +11,8 @@ public class Document {
     private String fileName;
     private String title;
     private int position ;
-    private String date;
     private String text;
+    private ConcurrentHashMap<String, PreTerm> termsInDoc;
     private String docID;
     private String cityOccurence;
 
@@ -18,13 +20,12 @@ public class Document {
         this.fileName = fileName;
     }
 
-    public Document(String fileName, String title, int position, String city, String date, String data, String docID, String language) {
+    public Document(String fileName, String title, int position, String city, String data, String docID, String language) {
         this.city = city;
         this.language = language;
         this.fileName = fileName;
         this.title = title;
         this.position= position;
-        this.date = date;
         this.text = data;
         this.docID = docID;
         this.cityOccurence="";
@@ -40,6 +41,10 @@ public class Document {
 
     public String getCityOccurence() {
         return cityOccurence;
+    }
+
+    public ConcurrentHashMap<String, PreTerm> getTermsInDoc() {
+        return termsInDoc;
     }
 
     public String getDocID() {
@@ -62,8 +67,11 @@ public class Document {
         return title;
     }
 
-    public void cleanText(){
+    public void cleanText(ConcurrentHashMap<String, PreTerm> tempDic){
         text=null;
+        termsInDoc = tempDic;
+
+
     }
     public StringBuilder getDocInfo(){
         StringBuilder sb = new StringBuilder();

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,16 +21,18 @@ public class Parser implements Runnable {
     private static ConcurrentHashMap<String, PreTerm> tempDictionary;
     private StopWords stopWord;
     private BlockingQueue<Document> read_parse;
-    private BlockingQueue<ConcurrentHashMap<String,PreTerm>> indexer_parse;
+    private BlockingQueue<Document> indexer_parse;
     private static PorterStemmer porterStemmer;
     private static Pattern pattern;
     private Document doc;
+    private boolean toStemm;
     private static final int bound = 100;
 
-    public Parser(BlockingQueue bqA, BlockingQueue bqB, String stopwordPath) {
+    public Parser(BlockingQueue bqA, BlockingQueue bqB, boolean toStemm, String stopwordPath) {
         stopWord = new StopWords(stopwordPath);
         porterStemmer = new PorterStemmer();
         read_parse = bqA;
+        this.toStemm = toStemm;
         indexer_parse = bqB;
         pattern = Pattern.compile("[ \\*\\#\\|\\&\\(\\)\\[\\]:\\;\\!\\?\\{\\}]|-{2}|((?=[a-zA-Z]?)/(?=[a-zA-Z]))|((?<=[a-zA-Z])/(?=[\\d]))|((?=[\\d]?)/(?<=[a-zA-Z]))");
     }
@@ -41,9 +44,9 @@ public class Parser implements Runnable {
                 String docID = doc.getDocID();
                 String text = doc.getText();
                 parse(docID,text);
-                doc.cleanText();
+                doc.cleanText(tempDictionary);
                 }
-                indexer_parse.put(new ConcurrentHashMap<>());
+                indexer_parse.put(doc);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,17 +58,16 @@ public class Parser implements Runnable {
         Splitter splitter = Splitter.on(pattern).omitEmptyStrings();
         tokenList = new ArrayList<>(splitter.splitToList(text));
         classify(docID);
-        updateDoc(docID);
+        updateDoc();
         try {
-            indexer_parse.put(tempDictionary);
+            indexer_parse.put(doc);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void updateDoc(String docID) {
+    private void updateDoc() {
         int currentMaxValue = Integer.MIN_VALUE;
-        Document doc = ReadFile.getDoc(docID);
         doc.setUniqueTf(tempDictionary.size());
         for (PreTerm preTerm : tempDictionary.values()){
             if (preTerm.getTf() > currentMaxValue) {
@@ -120,9 +122,9 @@ public class Parser implements Runnable {
         //Date.dateParse(index, token) + Combo.parseCombo(index, token) +
         // Hyphen.parseHyphen(index, token) + Quotation.parseQuotation(index, token)
         String res= Date.dateParse(index, token);
-        if(res.isEmpty()) {
-            res = Combo.parseCombo(index, token);
-        }
+        //if(res.isEmpty()) {
+            //res = Combo.parseCombo(index, token);
+        //}
         if(res.isEmpty()){
             res = Hyphen.parseHyphen(index, token);
         }
@@ -137,10 +139,7 @@ public class Parser implements Runnable {
             return "eof";
         String token = tokenList.get(index);
         token = token.replaceAll("[,'` ]", "");
-        if (!token.isEmpty()) {
-            if (token.charAt(token.length() - 1) == '.')
-                 token = token.substring(0, token.length() - 1);
-        }
+        token = StringUtils.stripEnd(token,".");
         if(token.isEmpty())
             token = getTokenFromList(index+1);
         return token;
@@ -148,13 +147,15 @@ public class Parser implements Runnable {
 
     private void addTerm(String token, String docID) {
         boolean isAtBegin = false;
-        token = porterStemmer.stem(token);
+        if(toStemm)
+            token = porterStemmer.stem(token);
         token = cleanToken(token);
         if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty())
             return;
+        checkCityInDoc(token);
         if(index <= bound)
             isAtBegin = true;
-        PreTerm term = new PreTerm(token, docID,isAtBegin);
+        PreTerm term = new PreTerm(token, docID,isAtBegin,doc.getTitle());
         if (tempDictionary.containsKey(token))
             tempDictionary.get(token).increaseTf();
         else {
@@ -179,7 +180,7 @@ public class Parser implements Runnable {
     }
 
     public void checkCityInDoc(String term){
-        if(doc.getCity().equalsIgnoreCase(term))
+        if(term.toUpperCase().contains(doc.getCity()))
             doc.setCityOccurence(String.valueOf(index));
     }
 
