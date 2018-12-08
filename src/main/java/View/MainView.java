@@ -1,6 +1,8 @@
 package View;
 
 import Controller.Controller;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,7 +10,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,9 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class MainView implements Initializable {
@@ -37,7 +36,7 @@ public class MainView implements Initializable {
     @FXML
     private ChoiceBox lang_box;
     @FXML
-    private TableView tbl_view;
+    private SplitPane mainWindow;
 
     private Controller controller;
 
@@ -69,7 +68,8 @@ public class MainView implements Initializable {
             showErrorAlert("Directory Not Found");
         }
         else{
-            controller.runEngine(corpusPath,postingPath,toStemm);
+            String msg = controller.runEngine(corpusPath,postingPath,toStemm);
+            showInformationAlert(msg);
         }
     }
 
@@ -78,6 +78,13 @@ public class MainView implements Initializable {
         alert.setTitle("Error Message");
         alert.setContentText(stringAlert);
         alert.showAndWait();
+    }
+
+    private void showInformationAlert(String stringAlert){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Message");
+        alert.setContentText(stringAlert);
+        alert.show();
     }
 
     public void showDictionary() {
@@ -112,8 +119,28 @@ public class MainView implements Initializable {
         }
     }
 
+    public void resetApp(){
+        controller.resetApp();
+        stem_chk.setSelected(false);
+        corpus_txt.clear();
+        posting_txt.clear();
+    }
+
+    public void loadDictionary(){
+        String postingPath = posting_txt.getText();
+        if(postingPath.isEmpty()){
+            showErrorAlert("Directory Not Found");
+        }
+        else {
+            String msg = controller.loadDictionary(stem_chk.isSelected(), postingPath);
+            showInformationAlert(msg);
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         getLanguages();
+        SplitPane.Divider divider = mainWindow.getDividers().get(0);
+        divider.positionProperty().addListener((observable, oldvalue, newvalue) -> divider.setPosition(0.1));
     }
 }

@@ -12,11 +12,19 @@ public class Controller {
         model = Model.getInstance();
     }
 
-    public void runEngine(String corpusPath, String postingPath, boolean toStemm) {
-        model.initalizeModel(corpusPath,postingPath,toStemm);
+    public String runEngine(String corpusPath, String postingPath, boolean toStemm) {
+        return model.initalizeModel(corpusPath,postingPath,toStemm);
     }
 
     public TreeMap showDictionary(){
         return model.showDictonary();
+    }
+
+    public void resetApp() {
+        model.reset();
+    }
+
+    public String loadDictionary(boolean stemSelected, String postingPath) {
+        return model.loadDictionary(stemSelected,postingPath);
     }
 }

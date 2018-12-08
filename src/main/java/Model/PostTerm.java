@@ -13,6 +13,13 @@ public class PostTerm {
         this.df = 1;
     }
 
+    public PostTerm(String name, String df, String tf, String ptr){
+        this.name = name;
+        this.df = Integer.valueOf(df);
+        this.tf = Integer.valueOf(tf);
+        this.ptr = Integer.valueOf(ptr);
+    }
+
     public void increaseTf(int tf){
         this.tf +=tf;
     }
@@ -47,6 +54,6 @@ public class PostTerm {
 
     @Override
     public String toString() {
-        return  "{" + df + "," + tf + "," + ptr + "}";
+        return  name + ":" + df + "," + tf + "," + ptr;
     }
 }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +31,8 @@ public class Posting {
         File file = new File( path + "\\" + folder + "\\" + fileID);
         try {
             file.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            BufferedWriter bw = new BufferedWriter
+                    (new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             postingQueue.add(String.valueOf(fileID));
             for (Map.Entry entry : tempPosting.entrySet()) {
                 bw.write(entry.getKey() + ":" + entry.getValue() + "\r\n");
@@ -53,9 +55,9 @@ public class Posting {
             fileID++;
             File fileTo = new File(path + "\\" + folder + "\\" + newFile);
             try {
-                BufferedReader brA = new BufferedReader(new FileReader(fileFromA));
-                BufferedReader brB = new BufferedReader(new FileReader(fileFromB));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(fileTo));
+                BufferedReader brA = new BufferedReader(new InputStreamReader(new FileInputStream(fileFromA), StandardCharsets.UTF_8));
+                BufferedReader brB = new BufferedReader(new InputStreamReader(new FileInputStream(fileFromB), StandardCharsets.UTF_8));
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8));
                 String lineA = brA.readLine();
                 String lineB = brB.readLine();
                 while ((lineA != null) && (lineB != null)) {
@@ -94,7 +96,6 @@ public class Posting {
                 brB.close();
                 FileUtils.deleteQuietly(fileFromA);
                 FileUtils.deleteQuietly(fileFromB);
-                fileFromB.delete();
                 bw.close();
                 postingQueue.add(newFile);
             } catch (Exception e) {
@@ -110,17 +111,19 @@ public class Posting {
         try {
             for(char ch='a';ch<='z';ch++){
                 File fileTo = new File(path + "\\" + folder + "\\" + ch);
-                buffers.put(String.valueOf(ch),new MutablePair<>(new BufferedWriter(new FileWriter(fileTo)),new AtomicInteger(0)));
+                buffers.put(String.valueOf(ch),new MutablePair<>(new BufferedWriter
+                        (new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(0)));
             }
             for(int i=0;i<=9;i++){
                 File fileTo = new File(path + "\\" + folder + "\\" + i);
-                buffers.put(String.valueOf(i),new MutablePair<>(new BufferedWriter(new FileWriter(fileTo)),new AtomicInteger(0)));
+                buffers.put(String.valueOf(i),new MutablePair<>(new BufferedWriter
+                        (new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(0)));
             }
 
             File fileTo = new File(path + "\\" + folder + "\\symbol");
-            buffers.put("symbol",new MutablePair<>(new BufferedWriter(new FileWriter(fileTo)),new AtomicInteger(0)));
+            buffers.put("symbol",new MutablePair<>(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(0)));
 
-            BufferedReader br = new BufferedReader(new FileReader(fileFrom));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileFrom), StandardCharsets.UTF_8));
             String line;
             while ((line = br.readLine()) != null){
                 String[] parts = line.split(":");
@@ -169,5 +172,11 @@ public class Posting {
             outputfile.println(city.getKey() + "-" + info + "-" + city.getValue());
         }
         outputfile.close();
+    }
+
+    public void deletePosting() {
+        try {
+            FileUtils.cleanDirectory(new File(path));
+        }catch (IOException e) { }
     }
 }

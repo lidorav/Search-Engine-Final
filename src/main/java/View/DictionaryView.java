@@ -36,6 +36,7 @@ public class DictionaryView implements Initializable {
             for (Map.Entry<String, String> entry : dictionary.entrySet())
                 tbl_view.getItems().add(new TableDataType(entry.getKey(), entry.getValue()));
         } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }

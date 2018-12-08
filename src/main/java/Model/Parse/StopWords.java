@@ -26,11 +26,15 @@ public class StopWords {
     }
 
     boolean isStopWord(String s){
-        return stopWordSet.contains(s);
+        return stopWordSet.contains(s.toLowerCase());
     }
 
     public void print (){
         System.out.println(stopWordSet);
+    }
+
+    public void clearStopWords(){
+        stopWordSet.clear();
     }
 
 

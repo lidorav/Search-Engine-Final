@@ -10,25 +10,39 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class that responsible of reading files, parsing the different tags and creating Document objects
+ */
 public class ReadFile implements Runnable {
     private File corpus;
     private BlockingQueue<Model.Document> parse_read;
 
 
-    //constructor
+    /**
+     * C'tor initialize the class parameters and activate the cities loading
+     * @param path a given path to the corpus
+     * @param bq Blocking queue between this class and the parsing class
+     */
     public ReadFile(String path, BlockingQueue bq){
         corpus = new File(path);
         City.loadCities();
         parse_read = bq;
     }
 
+    /**
+     * run method of the working thread
+     */
     @Override
     public void run() {
         read();
     }
 
+    /**
+     * Responsible of reading all the files and documents in the given corpus path.
+     * parsing the document with the important tags and creating the doucment object for each document.
+     * sending the created document object to the given queue.
+     */
     public void read() {
         int counter=0;
         for (File dir : corpus.listFiles()) {
@@ -89,5 +103,12 @@ public class ReadFile implements Runnable {
             parse_read.put(new Model.Document("fin"));
             System.out.println(counter);
         }catch (Exception e){}
+    }
+
+    /**
+     * clear the loaded cities
+     */
+    public void clear(){
+        City.clearCities();
     }
 }

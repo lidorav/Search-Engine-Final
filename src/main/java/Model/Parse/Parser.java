@@ -190,4 +190,8 @@ public class Parser implements Runnable {
         tempDictionary.remove(currentTerm);
         tempDictionary.put(newTerm,term);
     }
+
+    public void clear(){
+        stopWord.clearStopWords();
+    }
 }

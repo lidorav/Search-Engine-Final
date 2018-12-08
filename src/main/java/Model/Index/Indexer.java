@@ -16,6 +16,7 @@ public class Indexer implements Runnable {
     private Dictionary dictionary;
     private Posting posting;
     private AtomicInteger counter;
+    private int numOfDocsIndex;
 
     public Indexer(BlockingQueue bq, boolean toStemm, String postingPath) {
         posting = new Posting(postingPath, toStemm);
@@ -25,6 +26,7 @@ public class Indexer implements Runnable {
         dictionary = new Dictionary(postingPath, toStemm);
         docPost = new TreeMap<>();
         counter = new AtomicInteger(0);
+        numOfDocsIndex = 0;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class Indexer implements Runnable {
                 if(tempDic == null)
                     continue;
                 int i = counter.incrementAndGet();
+                numOfDocsIndex++;
                 for (Map.Entry<String, PreTerm> entry : tempDic.entrySet()) {
                     if(i==5000) {
                         posting.initTempPosting(tempPost);
@@ -55,11 +58,11 @@ public class Indexer implements Runnable {
                     }
                     if (isInTempPosting(entry.getKey())) {
                         StringBuilder sb = tempPost.get(entry.getKey());
-                        sb.append(preTerm.getDocID()).append("-").append(preTerm.getTf()).append(",");
+                        sb.append(preTerm.getDocID()).append(";").append(preTerm.getTf()).append(",").append(preTerm.getInTitle()).append(",").append(preTerm.getAtBeginOfDoc()).append(",");
                     } else {
                         //create new term in post
                         tempPost.put(entry.getKey(),
-                                new StringBuilder().append(preTerm.getDocID()).append("-").append(preTerm.getTf()).append(","));
+                                new StringBuilder().append(preTerm.getDocID()).append(";").append(preTerm.getTf()).append(",").append(preTerm.getInTitle()).append(",").append(preTerm.getAtBeginOfDoc()).append(","));
                     }
                     if (dictionary.isInDictionary(entry.getKey())) {
                         dictionary.updateTerm(preTerm);
@@ -71,10 +74,15 @@ public class Indexer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        posting.writeDocIndex(docPost);
-        posting.initTempPosting(tempPost);
+        if(counter.get()>0) {
+            posting.writeDocIndex(docPost);
+            posting.initTempPosting(tempPost);
+            docPost = new TreeMap<>();
+            tempPost = new TreeMap<>();
+        }
         posting.writeCityIndex(cityPost);
         posting.mergePosting();
+        printDic();
     }
 
     private void addDocToCityIndex(Document doc) {
@@ -105,4 +113,19 @@ public class Indexer implements Runnable {
     public void printDic(){dictionary.printDic();}
 
 
+    public void deleteFiles() {
+        docPost.clear();
+        cityPost.clear();
+        tempPost.clear();
+        posting.deletePosting();
+        dictionary.clearDic();
+    }
+
+    public String loadDictionary() {
+        return dictionary.load();
+    }
+
+    public String resultData(){
+        return "Num of Unique Terms: " + dictionary.getSize() +"\nNum of Indexed Docs: " + numOfDocsIndex;
+    }
 }

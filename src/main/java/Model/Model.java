@@ -29,36 +29,48 @@ public class Model {
         return instance;
     }
 
-    public void initalizeModel(String corpusPath, String postingPath, boolean toStemm) {
+    public String initalizeModel(String corpusPath, String postingPath, boolean toStemm) {
+        String res = "";
         reader = new ReadFile(corpusPath, queueA);
         parser = new Parser(queueA, queueB,toStemm,corpusPath);
         indexer = new Indexer(queueB,toStemm,postingPath);
         long startTime = System.nanoTime();
-        try {
             Thread t1 = new Thread(reader);
             Thread t2 = new Thread(parser);
             Thread t3 = new Thread(indexer);
-
         t1.start();
         t2.start();
         t3.start();
+        try{
         t3.join();
         t2.join();
         t1.join();
-        } catch (Exception e) {
-            System.out.println(e + "Error");
-        }
+        } catch (Exception e) { }
 
         //starting consumer to consume messages from queue
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
-        indexer.printDic();
-
-        System.out.println("Execution time in sec : " +
-                timeElapsed / 1000000000);
+        res =  "Total Running Time: " + timeElapsed/1000000000 + "sec\n" + indexer.resultData();
+        return res;
     }
 
     public TreeMap showDictonary(){
         return Dictionary.getSorted();
+    }
+
+    public void reset() {
+        if(reader != null)
+            reader.clear();
+        if(parser != null)
+            parser.clear();
+        if(indexer != null)
+            indexer.deleteFiles();
+        instance = new Model();
+    }
+
+    public String loadDictionary(boolean stemSelected, String postingPath) {
+        instance = new Model();
+        indexer = new Indexer(queueB,stemSelected,postingPath);
+        return indexer.loadDictionary();
     }
 }

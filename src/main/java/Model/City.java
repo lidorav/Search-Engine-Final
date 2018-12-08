@@ -1,5 +1,6 @@
 package Model;
 
+import Model.Parse.ANumbers;
 import com.google.gson.*;
 
 import java.io.File;
@@ -31,10 +32,14 @@ public class City {
        if(dataByCity.containsKey(cityname)) {
            JsonObject element = dataByCity.get(cityname);
            sb.append(element.get("name")).append(",").append(element.get("currencies").toString())
-                   .append(",").append(element.get("population"));
+                   .append(",").append(ANumbers.parseNumber(element.get("population").toString(),""));
        }
        String res = sb.toString();
        res = res.replace("\"","");
        return res;
+   }
+
+   public static void clearCities(){
+       dataByCity.clear();
    }
 }
