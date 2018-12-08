@@ -1,7 +1,15 @@
 package Model.Parse;
 
+/**
+ * Class that responsible of parsing hyphen phrase
+ */
 public class Hyphen {
-
+    /**
+     *
+     * @param index
+     * @param token
+     * @return
+     */
     public static String parseHyphen(int index, String token) {
         String res = "";
         String part1;
@@ -11,6 +19,7 @@ public class Hyphen {
                 Parser.replaceToken(index, token.replace("-",""));
                 return "";
             }
+            //
             if (token.matches(".*\\d+.*")) {
                 String[] parts = token.split("-");
                 if (parts[0].chars().allMatch(Character::isDigit)) {
@@ -28,6 +37,7 @@ public class Hyphen {
             }
             return res;
         }
+        //
         if(token.chars().allMatch(Character::isDigit)){
             String secToken = Parser.getTokenFromList(index+1);
             if(secToken.contains("-")){
@@ -41,6 +51,7 @@ public class Hyphen {
                 return parseHyphen(index+1,res);
             }
         }
+        //
         if(token.toLowerCase().equals("between")){
             String thirdToken = Parser.getTokenFromList(index+2);
             if(thirdToken.toLowerCase().equals("and")){

@@ -1,7 +1,14 @@
 package Model.Parse;
-
+/**
+ * Class that responsible of parsingQuotation phrase
+ */
 public class Quotation {
-
+    /**
+     * a parse function for Quotation rule
+     * @param index
+     * @param token
+     * @return legal Quotation rule term ( string)
+     */
     public static String parseQuotation(int index, String token){
         String nextToken = "";
         StringBuilder res= new StringBuilder();

@@ -2,19 +2,20 @@ package Model.Parse;
 
 import Model.Document;
 import Model.PreTerm;
-import Model.Read.ReadFile;
 import com.google.common.base.Splitter;
 import opennlp.tools.stemmer.PorterStemmer;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+/**
+ * a main class for parsing rules on the text
+ */
 public class Parser implements Runnable {
     protected static int index;
     private static List<String> tokenList;
@@ -28,6 +29,13 @@ public class Parser implements Runnable {
     private boolean toStemm;
     private static final int bound = 100;
 
+    /**
+     * C'tor initialize the class parameters
+     * @param bqA
+     * @param bqB
+     * @param toStemm
+     * @param stopwordPath
+     */
     public Parser(BlockingQueue bqA, BlockingQueue bqB, boolean toStemm, String stopwordPath) {
         stopWord = new StopWords(stopwordPath);
         porterStemmer = new PorterStemmer();
@@ -37,6 +45,9 @@ public class Parser implements Runnable {
         pattern = Pattern.compile("[ \\*\\#\\|\\&\\(\\)\\[\\]:\\;\\!\\?\\{\\}]|-{2}|((?=[a-zA-Z]?)/(?=[a-zA-Z]))|((?<=[a-zA-Z])/(?=[\\d]))|((?=[\\d]?)/(?<=[a-zA-Z]))");
     }
 
+    /**
+     * run method of the working thread
+     */
     public void run() {
         try {
             //consuming messages until exit message is received
@@ -52,6 +63,11 @@ public class Parser implements Runnable {
         }
     }
 
+    /**
+     * main parse function
+     * @param docID
+     * @param text
+     */
     public void parse(String docID, String text) {
         tempDictionary = new ConcurrentHashMap<>();
         index = 0;
@@ -66,6 +82,9 @@ public class Parser implements Runnable {
         }
     }
 
+    /**
+     * update document tf field
+     */
     private void updateDoc() {
         int currentMaxValue = Integer.MIN_VALUE;
         doc.setUniqueTf(tempDictionary.size());
@@ -77,6 +96,10 @@ public class Parser implements Runnable {
         doc.setMaxTf(currentMaxValue);
     }
 
+    /**
+     * main classify function of a text - to numbers or text tokens
+     * @param docID
+     */
     private void classify(String docID) {
         for (; index < tokenList.size(); index++) {
             String token = getTokenFromList(index);
@@ -99,6 +122,11 @@ public class Parser implements Runnable {
         }
     }
 
+    /**
+     * aggregated numbers parsing rules function
+     * @param token
+     * @return legal numbers token
+     */
     private String numParse (String token){
         //Price.parsePrice(index, token) + Percentage.parsePercent(index, token) + Date.dateParse(index, token)
           //      + Hyphen.parseHyphen(index, token) + Quotation.parseQuotation(index, token);
@@ -118,6 +146,11 @@ public class Parser implements Runnable {
         return res;
     }
 
+    /**
+     * aggregated letters parsing rules function
+     * @param token
+     * @return legal text token
+     */
     private String letterParse ( String token){
         //Date.dateParse(index, token) + Combo.parseCombo(index, token) +
         // Hyphen.parseHyphen(index, token) + Quotation.parseQuotation(index, token)
@@ -134,6 +167,11 @@ public class Parser implements Runnable {
         return res;
     }
 
+    /**
+     * get Token From List of tokens
+     * @param index
+     * @return token
+     */
     static String getTokenFromList(int index) {
         if (index >= tokenList.size())
             return "eof";
@@ -145,6 +183,11 @@ public class Parser implements Runnable {
         return token;
     }
 
+    /**
+     * add term to dictionary function
+     * @param token
+     * @param docID
+     */
     private void addTerm(String token, String docID) {
         boolean isAtBegin = false;
         if(toStemm)
@@ -163,6 +206,11 @@ public class Parser implements Runnable {
         }
     }
 
+    /**
+     * cleaning function of terms
+     * @param token
+     * @return "clean" term
+     */
     private String cleanToken(String token) {
         String res =StringUtils.stripStart(token,null);
         res =StringUtils.stripEnd(res,null);
@@ -171,19 +219,38 @@ public class Parser implements Runnable {
         return res;
     }
 
+    /**
+     * function that replace 2 obj of token
+     * @param index
+     * @param newToken
+     */
     static void replaceToken(int index, String newToken) {
         tokenList.set(index, newToken);
     }
 
+    /**
+     * boolean function to check if a term is in the dictionary
+     * @param token
+     * @return true if temp dictionary contains term
+     */
     static boolean checkExist(String token){
         return tempDictionary.containsKey(token);
     }
 
+    /**
+     * function that add city to doc if its not in doc
+     * @param term - a optional city
+     */
     public void checkCityInDoc(String term){
         if(term.toUpperCase().contains(doc.getCity()))
             doc.setCityOccurence(String.valueOf(index));
     }
 
+    /**
+     * function that replace 2 obj of term
+     * @param currentTerm
+     * @param newTerm
+     */
     static void replaceTerm(String currentTerm, String newTerm){
         PreTerm term = tempDictionary.get(currentTerm);
         term.setName(newTerm);
@@ -191,6 +258,9 @@ public class Parser implements Runnable {
         tempDictionary.put(newTerm,term);
     }
 
+    /**
+     * clears the stop words when rest butten is activated
+     */
     public void clear(){
         stopWord.clearStopWords();
     }

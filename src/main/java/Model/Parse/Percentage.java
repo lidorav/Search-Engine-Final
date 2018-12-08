@@ -1,7 +1,15 @@
 package Model.Parse;
 
+/**
+ * Class that responsible of parsing Percentage phrase (extends ANumbers)
+ */
 public class Percentage extends ANumbers {
-
+    /**
+     * parsing function for different percentage patterns
+     * @param index
+     * @param token
+     * @return
+     */
     public static String parsePercent(int index, String token){
         String res = "";
         if(token.contains("%"))

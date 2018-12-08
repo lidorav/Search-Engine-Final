@@ -1,7 +1,16 @@
 package Model.Parse;
 
+/**
+ * Class that responsible of parsing Percentage phrase (extends ANumbers)
+ */
 public class Price extends ANumbers {
 
+    /**
+     * price parse function for different pattern of Dollar
+     * @param index
+     * @param firstToken
+     * @return a legal Dollar combined term
+     */
     public static String parsePrice(int index, String firstToken){
         String fraction = "";
         String secToken = Parser.getTokenFromList(index+1).toLowerCase();
@@ -40,6 +49,12 @@ public class Price extends ANumbers {
         return "";
     }
 
+    /**
+     * convert To Millions / BILLION /TRILLION
+     * @param str
+     * @param nextStr
+     * @return a legal number term
+     */
     private static String convertToMillions(String str, String nextStr) {
         final long MILLION = 1000000L;
         final long BILLION = 1000000000L;

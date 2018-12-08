@@ -1,7 +1,16 @@
 package Model.Parse;
 
+/**
+ * new rule class the takes a combo prhase ( big letter sequence ) and parse it to terms
+ */
 public class Combo {
 
+    /**
+     * a parsing function that create a combo token
+     * @param index
+     * @param token
+     * @return combo token
+     */
     public static String parseCombo(int index, String token) {
         StringBuilder res;
         int counter =1;
