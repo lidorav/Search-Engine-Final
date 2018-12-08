@@ -193,8 +193,6 @@ public class Parser implements Runnable {
      */
     private void addTerm(String token, String docID) {
         boolean isAtBegin = false;
-        if(toStemm)
-            token = porterStemmer.stem(token);
         token = cleanToken(token);
         if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty() || stopWord.isStopWord(token))
             return;
