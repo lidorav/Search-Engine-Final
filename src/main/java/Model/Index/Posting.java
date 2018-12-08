@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Class responsible in writing the posting data to files
+ */
 public class Posting {
 
     private String path;
@@ -17,6 +20,11 @@ public class Posting {
     private Queue<String> postingQueue;
     private String folder;
 
+    /**
+     * C'tor initialize class fields and create a new folder depends on the given stem boolean
+     * @param path a given path for the Posting folder
+     * @param toStemm a given boolean to decide the folder name
+     */
     public Posting(String path, boolean toStemm) {
         this.path = path;
         if(toStemm)
@@ -27,6 +35,10 @@ public class Posting {
         postingQueue = new LinkedList();
     }
 
+    /**
+     * Write all the initial positing files to disk
+     * @param tempPosting a Tree-map that contains the posting data
+     */
     public void initTempPosting(TreeMap<String, StringBuilder> tempPosting) {
         File file = new File( path + "\\" + folder + "\\" + fileID);
         try {
@@ -44,6 +56,9 @@ public class Posting {
         fileID++;
     }
 
+    /**
+     * Merge all the inital posting files into 1 posting file
+     */
     public void mergePosting() {
         fileID=2000;
         while (postingQueue.size() > 1) {
@@ -64,28 +79,33 @@ public class Posting {
                     String[] termA = lineA.split(":");
                     String[] termB = lineB.split(":");
                     int compareRes = termA[0].compareTo(termB[0]);
+                    //if both terms are the same write both lines in one line to the merged file
                     if (compareRes == 0) {
                         bw.write(lineA + termB[1]+"\r\n");
                         lineA = brA.readLine();
                         lineB = brB.readLine();
                         continue;
                     }
+                    //if line B is bigger then Line A write line A to the merged file
                     if (compareRes < 0) {
                         bw.write(lineA+"\r\n");
                         lineA = brA.readLine();
                         continue;
                     }
+                    //if line A is bigger then Line B write line B to the merged file
                     if (compareRes > 0) {
                         bw.write(lineB+"\r\n");
                         lineB = brB.readLine();
                     }
                 }
+                //if we finished all lines at file A, write all the lines left in file B to the merged file
                 if (lineA == null) {
                     while (lineB != null) {
                         bw.write(lineB+"\r\n");
                         lineB = brB.readLine();
                     }
                 }
+                //if we finished all lines at file B, write all the lines left in file A to the merged file
                 if (lineB == null) {
                     while (lineA != null) {
                         bw.write(lineA+"\r\n");
@@ -94,9 +114,11 @@ public class Posting {
                 }
                 brA.close();
                 brB.close();
+                //delete the older posting files
                 FileUtils.deleteQuietly(fileFromA);
                 FileUtils.deleteQuietly(fileFromB);
                 bw.close();
+                //add the queue the new merged posting file
                 postingQueue.add(newFile);
             } catch (Exception e) {
             }
@@ -105,6 +127,11 @@ public class Posting {
         orderBy(postingQueue.poll());
     }
 
+    /**
+     * Create posting file according to the english alphabetic and numbers 0-1
+     * Sort the merged posting file into separate files
+     * @param postingFile the given posting file name
+     */
     private void orderBy(String postingFile) {
         HashMap<String, Pair<BufferedWriter, AtomicInteger>> buffers = new HashMap<>();
         File fileFrom = new File(path + "\\" + folder + "\\" + postingFile);
@@ -141,6 +168,11 @@ public class Posting {
         }catch (IOException e){}
     }
 
+    /**
+     * Get the posting filename from a given term by calculating it's first character
+     * @param line the line in the merged posting file
+     * @return the filename the line is associated
+     */
     private String getFileName(String line) {
         char c = line.toLowerCase().charAt(0);
         if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z'))
@@ -148,6 +180,10 @@ public class Posting {
         return "symbol";
     }
 
+    /**
+     * write the documents posting into a file at the given path
+     * @param docPost a Tree-map that holds all the documents information
+     */
     public void writeDocIndex(TreeMap<String, StringBuilder> docPost) {
         try {
             PrintWriter outputfile = new PrintWriter(new FileWriter(path + "\\" + folder + "\\documents.txt", true));
@@ -158,6 +194,10 @@ public class Posting {
         }
     }
 
+    /**
+     * write the city posting into a file at the given path
+     * @param cityPost a Tree-map that holds all the documents City information
+     */
     public void writeCityIndex(TreeMap<String, StringBuilder> cityPost) {
         PrintWriter outputfile = null;
         try {
@@ -174,6 +214,9 @@ public class Posting {
         outputfile.close();
     }
 
+    /**
+     * Clean the posting information by deleted the recursively in the given posting path directory
+     */
     public void deletePosting() {
         try {
             FileUtils.cleanDirectory(new File(path));

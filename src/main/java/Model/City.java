@@ -2,16 +2,21 @@ package Model;
 
 import Model.Parse.ANumbers;
 import com.google.gson.*;
-
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
+/**
+ * Class that responsible in loading the city file and support in given information for each city.
+ */
 public class City {
 
    private static HashMap<String, JsonObject> dataByCity = new HashMap<>();
    private static String path = "cities.json";
 
+    /**
+     * load to a hash-map a json file of all cities and their information.
+     */
    public static void loadCities(){
         try {
             ClassLoader classLoader = City.class.getClassLoader();
@@ -27,6 +32,11 @@ public class City {
         }catch (Exception e){}
    }
 
+    /**
+     * Get the city information data by a given city name
+     * @param cityname a given city name
+     * @return a string that holds all the city information
+     */
    public static String getCityInfo(String cityname){
        StringBuilder sb = new StringBuilder();
        if(dataByCity.containsKey(cityname)) {
@@ -39,6 +49,9 @@ public class City {
        return res;
    }
 
+    /**
+     * Clear the city hash-map
+     */
    public static void clearCities(){
        dataByCity.clear();
    }

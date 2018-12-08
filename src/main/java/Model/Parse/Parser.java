@@ -3,7 +3,6 @@ package Model.Parse;
 import Model.Document;
 import Model.PreTerm;
 import com.google.common.base.Splitter;
-import opennlp.tools.stemmer.PorterStemmer;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -105,6 +104,10 @@ public class Parser implements Runnable {
             String token = getTokenFromList(index);
             if (token.isEmpty() || stopWord.isStopWord(token))
                 continue;
+            if(toStemm) {
+                token = porterStemmer.stem(token);
+                porterStemmer.reset();
+            }
             if (token.matches(".*\\d+.*")) {
                 String term = numParse(token);
                 if (term.isEmpty())
@@ -193,7 +196,7 @@ public class Parser implements Runnable {
         if(toStemm)
             token = porterStemmer.stem(token);
         token = cleanToken(token);
-        if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty())
+        if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty() || stopWord.isStopWord(token))
             return;
         checkCityInDoc(token);
         if(index <= bound)

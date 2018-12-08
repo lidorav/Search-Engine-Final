@@ -9,6 +9,9 @@ import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * class that connect all the pieces together, all parts of the engine with different threads
+ */
 public class Model {
     private BlockingQueue<Document> queueA;
     private BlockingQueue<Document> queueB;
@@ -18,10 +21,18 @@ public class Model {
 
     private static Model instance;
 
+    /**
+     * Private C'tor initialize the blocking queue fields
+     */
     private Model() {
         queueA = new LinkedBlockingQueue<>();
         queueB = new LinkedBlockingQueue<>();
     }
+
+    /**
+     * get the class instance (singleton)
+     * @return class instance
+     */
     public static Model getInstance() {
         if (instance == null) {
             instance = new Model();
@@ -29,8 +40,15 @@ public class Model {
         return instance;
     }
 
+    /**
+     * Initialize the model pieces with different threads and major the time elapsed
+     * @param corpusPath the path to the corpus directory
+     * @param postingPath the path to the posting directory
+     * @param toStemm a boolean to stem or not
+     * @return a string with information of the indexing process
+     */
     public String initalizeModel(String corpusPath, String postingPath, boolean toStemm) {
-        String res = "";
+        String res;
         reader = new ReadFile(corpusPath, queueA);
         parser = new Parser(queueA, queueB,toStemm,corpusPath);
         indexer = new Indexer(queueB,toStemm,postingPath);
@@ -54,10 +72,17 @@ public class Model {
         return res;
     }
 
+    /**
+     * get the dictionary sorted by term name
+     * @return tree-map holding a sorted dictionary
+     */
     public TreeMap showDictonary(){
         return Dictionary.getSorted();
     }
 
+    /**
+     * Clean all of the model objects
+     */
     public void reset() {
         if(reader != null)
             reader.clear();
@@ -68,6 +93,12 @@ public class Model {
         instance = new Model();
     }
 
+    /**
+     * Load data from file to the dictionary hash-map
+     * @param stemSelected a boolean that indicates if loading the dictionary stemmed or not
+     * @param postingPath the path of the posting directory
+     * @return a string that indicates if the loading was successful or not.
+     */
     public String loadDictionary(boolean stemSelected, String postingPath) {
         instance = new Model();
         indexer = new Indexer(queueB,stemSelected,postingPath);
