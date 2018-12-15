@@ -17,7 +17,6 @@ public class Dictionary {
     private String folder;
     private String path;
     private static ConcurrentHashMap<String, PostTerm> dictionary;
-    private int countNum = 0;
 
     /**
      * C'tor initialize the class fields
@@ -48,7 +47,7 @@ public class Dictionary {
     public static TreeMap<String, String> getSorted() {
         TreeMap sortedDic = new TreeMap();
         for (Map.Entry<String,PostTerm> entry: dictionary.entrySet()) {
-            sortedDic.put(entry.getKey(),String.valueOf(entry.getValue().getDf()));
+            sortedDic.put(entry.getKey(),String.valueOf(entry.getValue().getTf()));
         }
         return sortedDic;
     }
@@ -67,16 +66,6 @@ public class Dictionary {
      * @param preTerm a given preTerm object
      */
     void addNewTerm(PreTerm preTerm) {
-        //temp just for part2
-        boolean flag = true;
-        String str = preTerm.getName().replaceAll("[ ./KMBkmbt+/-]","");
-        for(int i=0;i<str.length();i++) {
-            if (str.charAt(i) < '0' || str.charAt(i) > '9')
-                flag = false;
-        }
-        if(flag)
-            countNum++;
-        //
         dictionary.put(preTerm.getName(), new PostTerm(preTerm));
     }
 
@@ -117,7 +106,6 @@ public class Dictionary {
             outputfile.println(p);
         }
         outputfile.close();
-        System.out.println(countNum);
     }
 
     /**

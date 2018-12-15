@@ -1,8 +1,6 @@
 package View;
 
 import Controller.Controller;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,15 +13,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class MainView implements Initializable {
 
@@ -39,9 +35,11 @@ public class MainView implements Initializable {
     private SplitPane mainWindow;
 
     private Controller controller;
+    private File root;
 
     public MainView() {
         controller = new Controller();
+        this.root = new File("./");
     }
 
     public void openCorpusBrowser(){
@@ -90,7 +88,7 @@ public class MainView implements Initializable {
     public void showDictionary() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            Parent root = loader.load(getClass().getClassLoader().getResource("dictionary.fxml"));
+            Parent root = loader.load(getClass().getClassLoader().getResource("/dictionary.fxml"));
             Stage newWindow = new Stage();
             newWindow.setTitle("Dictionary");
             newWindow.setScene(new Scene(root));
@@ -107,14 +105,17 @@ public class MainView implements Initializable {
         }
     }
 
-    public void getLanguages(){
-        List<String> myList;
-        try {
-            myList = Files.lines(Paths.get(getClass().getClassLoader().getResource("languages.txt").toURI())).collect(Collectors.toList());
-            lang_box.setItems(FXCollections.observableArrayList(myList));
+    public void getLanguages() {
+        ArrayList<String> arr = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(root.getAbsoluteFile()+"\\src\\main\\resources\\languages.txt"))) {
+
+            String sCurrentLine;
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                arr.add(sCurrentLine);
+            }
+            lang_box.setItems(FXCollections.observableArrayList(arr));
         } catch (IOException e) {
-            System.out.println(e);
-        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }

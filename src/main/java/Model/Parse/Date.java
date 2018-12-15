@@ -7,7 +7,7 @@ import java.time.Month;
  */
 public class Date {
 
-    private static final String[]  dateArr = {"january" ,"jan" ,"february" ,"feb" ,"march" ,"mar" ,"april" ,"apr" ,
+    private static final String[] dateArr = {"january" ,"jan" ,"february" ,"feb" ,"march" ,"mar" ,"april" ,"apr" ,
             "may" ,"june" ,"jun" ,"july" ,"jul" ,"august" ,"aug" ,"september" ,"sep" ,
             "october" ,"oct" ,"november" ,"nov" ,"december" ,"dec"};
 
