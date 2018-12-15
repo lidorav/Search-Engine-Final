@@ -1,4 +1,4 @@
-package Model.Parse;
+package Model.PartA.Parse;
 
 /**
  * Class that responsible of parsing Percentage phrase (extends ANumbers)

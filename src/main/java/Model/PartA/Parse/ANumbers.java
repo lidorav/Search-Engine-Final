@@ -1,4 +1,4 @@
-package Model.Parse;
+package Model.PartA.Parse;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

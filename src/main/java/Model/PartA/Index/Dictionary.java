@@ -1,7 +1,7 @@
-package Model.Index;
+package Model.PartA.Index;
 
-import Model.PreTerm;
-import Model.PostTerm;
+import Model.PartA.PreTerm;
+import Model.PartA.PostTerm;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

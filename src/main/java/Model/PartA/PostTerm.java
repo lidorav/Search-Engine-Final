@@ -1,4 +1,4 @@
-package Model;
+package Model.PartA;
 
 public class PostTerm {
     private String name;

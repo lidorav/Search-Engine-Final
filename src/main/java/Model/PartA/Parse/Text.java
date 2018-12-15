@@ -1,6 +1,6 @@
-package Model.Parse;
+package Model.PartA.Parse;
 
-import Model.Index.Dictionary;
+import Model.PartA.Index.Dictionary;
 
 /**
  * Class that represent only text tokens

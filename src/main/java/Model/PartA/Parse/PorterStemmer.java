@@ -1,4 +1,4 @@
-package Model.Parse;
+package Model.PartA.Parse;
 import org.apache.lucene.util.ArrayUtil;
 
 /**

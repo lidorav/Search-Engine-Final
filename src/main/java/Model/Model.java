@@ -1,9 +1,10 @@
 package Model;
 
-import Model.Index.Dictionary;
-import Model.Index.Indexer;
-import Model.Parse.Parser;
-import Model.Read.ReadFile;
+import Model.PartA.Document;
+import Model.PartA.Index.Dictionary;
+import Model.PartA.Index.Indexer;
+import Model.PartA.Parse.Parser;
+import Model.PartA.Read.ReadFile;
 
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;

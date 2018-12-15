@@ -1,6 +1,6 @@
-package Model.Read;
+package Model.PartA.Read;
 
-import Model.City;
+import Model.PartA.City;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,7 +16,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class ReadFile implements Runnable {
     private File corpus;
-    private BlockingQueue<Model.Document> parse_read;
+    private BlockingQueue<Model.PartA.Document> parse_read;
 
 
     /**
@@ -91,7 +91,7 @@ public class ReadFile implements Runnable {
                         Elements docTextElement = element.getElementsByTag("TEXT");
                         if (!(docTextElement.isEmpty()))
                             data = element.getElementsByTag("TEXT").get(0).text();
-                        Model.Document modelDoc = new Model.Document(file.getName(), docTitle, i++, docCity, data, docNum, docLanguage);
+                        Model.PartA.Document modelDoc = new Model.PartA.Document(file.getName(), docTitle, i++, docCity, data, docNum, docLanguage);
                         //send document data for parsing
                         parse_read.put(modelDoc);
                     }
@@ -100,7 +100,7 @@ public class ReadFile implements Runnable {
             //after file is complete we deploy it to the posting file
         }
         try {
-            parse_read.put(new Model.Document("fin"));
+            parse_read.put(new Model.PartA.Document("fin"));
             System.out.println(counter);
         }catch (Exception e){}
     }

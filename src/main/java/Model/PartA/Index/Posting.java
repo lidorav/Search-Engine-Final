@@ -1,6 +1,6 @@
-package Model.Index;
+package Model.PartA.Index;
 
-import Model.City;
+import Model.PartA.City;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;

@@ -1,7 +1,7 @@
-package Model.Parse;
+package Model.PartA.Parse;
 
-import Model.Document;
-import Model.PreTerm;
+import Model.PartA.Document;
+import Model.PartA.PreTerm;
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;

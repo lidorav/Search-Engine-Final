@@ -1,4 +1,4 @@
-package Model;
+package Model.PartA;
 
 import java.util.concurrent.ConcurrentHashMap;
 

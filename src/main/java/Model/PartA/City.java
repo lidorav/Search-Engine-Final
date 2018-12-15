@@ -1,6 +1,7 @@
-package Model;
+package Model.PartA;
 
-import Model.Parse.ANumbers;
+import Model.Model;
+import Model.PartA.Parse.ANumbers;
 import com.google.gson.*;
 import java.io.File;
 import java.io.FileReader;

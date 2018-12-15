@@ -1,7 +1,7 @@
-package Model.Index;
+package Model.PartA.Index;
 
-import Model.Document;
-import Model.PreTerm;
+import Model.PartA.Document;
+import Model.PartA.PreTerm;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
