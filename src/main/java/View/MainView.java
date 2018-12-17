@@ -88,7 +88,7 @@ public class MainView implements Initializable {
     public void showDictionary() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            Parent root = loader.load(getClass().getClassLoader().getResource("/dictionary.fxml"));
+            Parent root = loader.load(getClass().getClassLoader().getResource("dictionary.fxml"));
             Stage newWindow = new Stage();
             newWindow.setTitle("Dictionary");
             newWindow.setScene(new Scene(root));

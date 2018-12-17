@@ -173,7 +173,7 @@ public class Posting {
      * @param line the line in the merged posting file
      * @return the filename the line is associated
      */
-    private String getFileName(String line) {
+       private String getFileName(String line) {
         char c = line.toLowerCase().charAt(0);
         if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z'))
             return String.valueOf(c);
@@ -193,6 +193,7 @@ public class Posting {
         } catch (IOException e) {
         }
     }
+
 
     /**
      * write the city posting into a file at the given path

@@ -5,6 +5,7 @@ import Model.PartA.Index.Dictionary;
 import Model.PartA.Index.Indexer;
 import Model.PartA.Parse.Parser;
 import Model.PartA.Read.ReadFile;
+import Model.PartB.ReadDoc;
 
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
@@ -78,6 +79,8 @@ public class Model {
      * @return tree-map holding a sorted dictionary
      */
     public TreeMap showDictonary(){
+        ReadDoc rd = new ReadDoc("C:\\Users\\USER\\Desktop\\retrivel\\WORK\\Posting\\Stemmed\\documents.txt");
+        rd.readDoc();
         return Dictionary.getSorted();
     }
 
@@ -92,6 +95,7 @@ public class Model {
         if(indexer != null)
             indexer.deleteFiles();
         instance = new Model();
+
     }
 
     /**

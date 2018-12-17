@@ -130,6 +130,24 @@ public class Dictionary {
     }
 
     /**
+     * get the pointer of a given term from the dictionary
+     * @param term
+     * @return int ptr
+     */
+    public static int getPointer(String term){
+        return dictionary.get(term).getPtr();
+    }
+
+    /**
+     * get the df of a doc - given a term from the dictionary
+     * @param term
+     * @return int df
+     */
+    public static int getDf(String term){
+        return dictionary.get(term).getDf();
+    }
+
+    /**
      * Add pointer (line in posting file) to a given term
      * @param term the given term in dictionary
      * @param index the line number in the file
