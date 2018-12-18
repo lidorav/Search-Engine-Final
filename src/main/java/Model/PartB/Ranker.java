@@ -5,6 +5,7 @@ import Model.PartA.Index.Dictionary;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.D;
@@ -30,7 +31,7 @@ public class Ranker {
      * ranking function
      * @param
      */
-    public double rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID, int D) {
+    public double rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID) {
         // for each term in the query
         double rankResult = 0;
         Iterator<String> entries = keySet.iterator();
