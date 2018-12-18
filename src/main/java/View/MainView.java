@@ -33,6 +33,8 @@ public class MainView implements Initializable {
     private ChoiceBox lang_box;
     @FXML
     private SplitPane mainWindow;
+    @FXML
+    private TextField query_txt;
 
     private Controller controller;
     private File root;
@@ -135,6 +137,19 @@ public class MainView implements Initializable {
         else {
             String msg = controller.loadDictionary(stem_chk.isSelected(), postingPath);
             showInformationAlert(msg);
+        }
+    }
+
+    public void searchQuery(){
+        String query = query_txt.getText();
+        String postingPath = posting_txt.getText();
+        if(query.isEmpty()){
+            showErrorAlert("Query Is Empty");
+        }
+        else if(postingPath.isEmpty())
+            showErrorAlert("Posting Directory Not Found");
+        else{
+            controller.searchQuery(stem_chk.isSelected(),postingPath,query);
         }
     }
 

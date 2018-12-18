@@ -3,28 +3,34 @@ package Model.PartB;
 
 import Model.PartA.Index.Dictionary;
 import Model.PartA.Parse.Parser;
+import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 public class Searcher {
 
-    private HashMap<String,Double> docMap;
+    private Map<String, Double> docMap;
+    private HashMap<String, HashMap<String, String[]>> queryDocs;
     private Ranker ranker;
     private Parser parser;
     private ReadDoc rd;
 
-    public Searcher(String path, boolean toStemm){
+    public Searcher(String path, boolean toStemm) {
         docMap = new HashMap<>();
         ranker = new Ranker(path);
-        rd = new ReadDoc(path,toStemm);
+        rd = new ReadDoc(path, toStemm);
         rd.readDoc();
         parser = new Parser(toStemm);
+        queryDocs = new HashMap<>();
     }
 
     /**
      * Search
+     *
      * @param query
      */
     public void search(String query) {
@@ -32,29 +38,54 @@ public class Searcher {
         int N = rd.getDocAmount();
         double avgDl = rd.getAvgDl();
         List<String> queryTerms = parser.parseQuery(query);
+        initializeQueryMap(queryTerms);
+        for(Map.Entry<String,HashMap<String,String[]>> mapEntry : queryDocs.entrySet()) {
+            for (Map.Entry<String, String[]> entry : mapEntry.getValue().entrySet()) {
+                rank = ranker.rank(N, avgDl,queryDocs.keySet(),queryDocs, entry.getKey(),Integer.valueOf(entry.getValue()[9]));
+                docMap.put(entry.getKey(), rank);
+            }
+        }
+        getTopScore();
+    }
+
+    private void initializeQueryMap(List<String> queryTerms) {
         for (int i = 0; i < queryTerms.size(); i++) {
             int ptr = getPointer(queryTerms.get(i));
             if (ptr == -1)
                 continue;
             String[] doc = rd.readDocFromPosting(getFileName(queryTerms.get(i)), ptr);
             if (doc != null) {
+                queryDocs.put(queryTerms.get(i),new HashMap<>());
                 for (int j = 0; j < doc.length; j++) {
                     String[] docParts = doc[j].split(";");
                     String[] docInfo = rd.readDocLine(Integer.valueOf(docParts[1]));
-                    rank = ranker.rank(queryTerms, N, avgDl, docParts,Integer.valueOf(docInfo[4]));
-                    docMap.put(docParts[0], rank);
+                    String[] both = ArrayUtils.addAll(docParts, docInfo);
+                    queryDocs.get(queryTerms.get(i)).put(docInfo[0],both);
                 }
             }
         }
+        rd.closeAccess();
     }
 
     /**
      * print
      */
-    public void printMap(){
-        for(Map.Entry<String,Double> entry:docMap.entrySet()){
-            System.out.println(entry);
+    public void printMap() {
+        int i=0;
+        int bounder=50;
+        PrintWriter outputfile = null;
+        try {
+            outputfile = new PrintWriter("test");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
+        for (Map.Entry<String, Double> entry : docMap.entrySet()) {
+            if(i>=bounder)
+                break;
+            outputfile.println("351 1000 "+entry.getKey()+" "+entry.getValue()+" 42.0 mt");
+            i++;
+        }
+        outputfile.close();
     }
 
     /**
@@ -77,4 +108,14 @@ public class Searcher {
             return String.valueOf(c);
         return "symbol";
     }
+
+    private void getTopScore(){
+        Map<String, Double> sorted = docMap
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Comparator.comparingDouble(e->e.getValue())))
+                .collect(toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
+        docMap = sorted;
+    }
+
 }

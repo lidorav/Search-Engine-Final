@@ -2,7 +2,6 @@ package Model.PartA.Index;
 
 import Model.PartA.Document;
 import Model.PartA.PreTerm;
-import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,12 +50,13 @@ public class Indexer implements Runnable {
             Document doc;
             //con suming messages until exit message is received
             while (!((doc = parser_indexer.take()).getFileName().equals("fin"))) {
-                boolean newDoc = true;
                 ConcurrentHashMap<String,PreTerm> tempDic = doc.getTermsInDoc();
                 if(tempDic == null)
                     continue;
                 int i = counter.incrementAndGet();
                 numOfDocsIndex++;
+                addDocToDocIndex(doc);
+                addDocToCityIndex(doc);
                 for (Map.Entry<String, PreTerm> entry : tempDic.entrySet()) {
                     if(i==5000) {
                         posting.initTempPosting(tempPost);
@@ -67,11 +67,6 @@ public class Indexer implements Runnable {
                         counter.set(0);
                     }
                     PreTerm preTerm = entry.getValue();
-                    if(newDoc) {
-                        addDocToDocIndex(doc);
-                        addDocToCityIndex(doc);
-                        newDoc=false;
-                    }
                     if (isInTempPosting(entry.getKey())) {
                         StringBuilder sb = tempPost.get(entry.getKey());
                         sb.append(preTerm.getDocID()).append(";").append(numOfDocsIndex).append(";").append(preTerm.getTf()).append(";").append(toChar(preTerm.getInTitle())).append(";").append(toChar(preTerm.getAtBeginOfDoc())).append(",");

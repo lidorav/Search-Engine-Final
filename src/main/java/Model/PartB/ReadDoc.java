@@ -11,6 +11,7 @@ public class ReadDoc {
     private String path;
     private int docAmount;
     private double avgDl;
+    private RandomAccessFile fileStore;
 
     /**
      * c'tor
@@ -24,7 +25,6 @@ public class ReadDoc {
             folder = "notStemmed";
         this.path = path + "\\" + folder;
         this.docAmount=0;
-
     }
 
     /**
@@ -80,7 +80,7 @@ public class ReadDoc {
         byte[] bytes = new byte[offset];
         try {
             File file = new File(path+"\\documents.txt");
-            RandomAccessFile fileStore = new RandomAccessFile(file, "r");
+            fileStore = new RandomAccessFile(file, "r");
             // moves file pointer to position specified
             fileStore.seek((ptr-1)*offset);
             // reading String from RandomAccessFile
@@ -94,6 +94,12 @@ public class ReadDoc {
         record = record.replaceAll("[ \n\r]","");
         return record.split(":");
 
+    }
+
+    public void closeAccess(){
+        try {
+            fileStore.close();
+        } catch (IOException e) {}
     }
 
 

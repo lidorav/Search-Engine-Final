@@ -72,11 +72,6 @@ public class Model {
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
         res =  "Total Running Time: " + timeElapsed/1000000000 + "sec\n" + indexer.resultData();
-
-        /** Testing Query **/
-        Searcher searcher = new Searcher(postingPath,toStemm);
-        searcher.search("Falkland petroleum exploration");
-        searcher.printMap();
         return res;
     }
 
@@ -112,5 +107,13 @@ public class Model {
         instance = new Model();
         indexer = new Indexer(queueB,stemSelected,postingPath);
         return indexer.loadDictionary();
+    }
+
+
+    public void searchQuery(boolean selected, String postingPath, String query) {
+        /** Testing Query **/
+        Searcher searcher = new Searcher(postingPath,selected);
+        searcher.search(query);
+        searcher.printMap();
     }
 }
