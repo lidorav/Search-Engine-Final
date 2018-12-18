@@ -1,5 +1,6 @@
 package Model;
 
+import Model.PartA.City;
 import Model.PartA.Document;
 import Model.PartA.Index.Dictionary;
 import Model.PartA.Index.Indexer;
@@ -8,6 +9,7 @@ import Model.PartA.Read.ReadFile;
 import Model.PartB.ReadDoc;
 import Model.PartB.Searcher;
 
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -115,5 +117,9 @@ public class Model {
         Searcher searcher = new Searcher(postingPath,selected);
         searcher.search(query);
         searcher.printMap();
+    }
+
+    public Set<String> getCities() {
+        return City.getCityList();
     }
 }

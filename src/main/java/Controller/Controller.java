@@ -34,7 +34,7 @@ public class Controller {
     }
 
     public Set<String> getCities() {
-        model.getCities();
-        
+       return model.getCities();
+
     }
 }
