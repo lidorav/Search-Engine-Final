@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Model;
 
+import java.util.Set;
 import java.util.TreeMap;
 
 public class Controller {
@@ -30,5 +31,10 @@ public class Controller {
 
     public void searchQuery(boolean selected, String postingPath, String query) {
         model.searchQuery(selected,postingPath,query);
+    }
+
+    public Set<String> getCities() {
+        model.getCities();
+        
     }
 }
