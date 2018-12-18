@@ -1,5 +1,6 @@
 package Model.PartA.Parse;
 
+import Model.PartA.City;
 import Model.PartA.Document;
 import Model.PartA.PreTerm;
 import com.google.common.base.Splitter;
@@ -93,6 +94,8 @@ public class Parser implements Runnable {
      * update document tf field
      */
     private void updateDoc() {
+        if(City.isCityInDoc(doc.getCity()))
+            City.addShow(doc.getCity(),doc.getDocID(),-1);
         int currentMaxValue = Integer.MIN_VALUE;
         doc.setUniqueTf(tempDictionary.size());
         for (PreTerm preTerm : tempDictionary.values()){
@@ -265,8 +268,8 @@ public class Parser implements Runnable {
      * @param term - a optional city
      */
     public void checkCityInDoc(String term){
-        if(term.toUpperCase().contains(doc.getCity()))
-            doc.setCityOccurence(String.valueOf(index));
+        if(City.isCityInDoc(term.toUpperCase()))
+            City.addShow(term.toUpperCase(),doc.getDocID(),index);
     }
 
     /**

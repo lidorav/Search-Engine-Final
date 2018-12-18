@@ -198,20 +198,22 @@ public class Posting {
 
     /**
      * write the city posting into a file at the given path
-     * @param cityPost a Tree-map that holds all the documents City information
      */
-    public void writeCityIndex(TreeMap<String, StringBuilder> cityPost) {
+    public void writeCityIndex() {
         PrintWriter outputfile = null;
         try {
             outputfile = new PrintWriter(path + "\\" + folder +"\\cities.txt");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        for (Map.Entry<String,StringBuilder> city : cityPost.entrySet()
+        HashMap<String,HashMap<String,StringBuilder>> cities = City.getCityOccurences();
+        for (Map.Entry<String,HashMap<String,StringBuilder>> city : cities.entrySet()
         ) {
-            String info = City.getCityInfo(city.getKey());
-            outputfile.println(city.getKey() + "-" + info + "-" + city.getValue());
+            String line = city.getKey()+ "~" + City.getCityInfo(city.getKey()) + "~";
+            for (Map.Entry<String, StringBuilder> entry : city.getValue().entrySet()) {
+            line = line + entry.getKey() + "[" + entry.getValue() + "]|";
+            }
+                outputfile.println(line);
         }
         outputfile.close();
     }

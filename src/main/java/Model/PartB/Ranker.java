@@ -31,7 +31,7 @@ public class Ranker {
      * ranking function
      * @param
      */
-    public double rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID,int D) {
+    public double rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID) {
         // for each term in the query
         double rankResult = 0;
         Iterator<String> entries = keySet.iterator();
