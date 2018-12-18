@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -206,14 +207,19 @@ public class Posting {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        HashMap<String,HashMap<String,StringBuilder>> cities = City.getCityOccurences();
+        ConcurrentHashMap<String,HashMap<String,StringBuilder>> cities = City.getCityOccurences();
         for (Map.Entry<String,HashMap<String,StringBuilder>> city : cities.entrySet()
         ) {
             String line = city.getKey()+ "~" + City.getCityInfo(city.getKey()) + "~";
             for (Map.Entry<String, StringBuilder> entry : city.getValue().entrySet()) {
-            line = line + entry.getKey() + "[" + entry.getValue() + "]|";
+                line = line + entry.getKey() + "[" + entry.getValue() + "]|";
             }
+            if(line.charAt(line.length()-1)=='~'){
+                City.removeUnUsed(city.getKey());
+            }
+            else {
                 outputfile.println(line);
+            }
         }
         outputfile.close();
     }
