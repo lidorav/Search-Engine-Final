@@ -5,6 +5,7 @@ import com.google.gson.*;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that responsible in loading the city file and support in given information for each city.
@@ -13,7 +14,7 @@ public class City {
 
    private static HashMap<String, JsonObject> dataByCity = new HashMap<>();
    private static String path = "cities.json";
-   private static HashMap<String,HashMap<String,StringBuilder>> cityOccurences = new HashMap<>();
+   private static ConcurrentHashMap<String,HashMap<String,StringBuilder>> cityOccurences = new ConcurrentHashMap<>();
     /**
      * load to a hash-map a json file of all cities and their information.
      */
@@ -53,7 +54,7 @@ public class City {
        return res;
    }
 
-    public static HashMap<String, HashMap<String, StringBuilder>> getCityOccurences() {
+    public static ConcurrentHashMap<String, HashMap<String, StringBuilder>> getCityOccurences() {
         return cityOccurences;
     }
 
@@ -61,8 +62,12 @@ public class City {
      * @return Set of citys
      */
    public static Set<String> getCityList(){
-       return dataByCity.keySet();
+       return cityOccurences.keySet();
    }
+
+   public static void removeUnUsed(String city){
+           cityOccurences.remove(city);
+       }
 
    public static void addShow(String city,String docID, int index){
        if(cityOccurences.get(city).containsKey(docID)){
@@ -77,6 +82,7 @@ public class City {
      * Clear the city hash-map
      */
    public static void clearCities(){
+       cityOccurences.clear();
        dataByCity.clear();
    }
 }
