@@ -1,6 +1,7 @@
 package Model.PartA.Index;
 
 import Model.PartA.City;
+import com.google.common.base.Strings;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -184,11 +185,11 @@ public class Posting {
      * write the documents posting into a file at the given path
      * @param docPost a Tree-map that holds all the documents information
      */
-    public void writeDocIndex(TreeMap<String, StringBuilder> docPost) {
+    public void writeDocIndex(LinkedHashMap<String, StringBuilder> docPost) {
         try {
             PrintWriter outputfile = new PrintWriter(new FileWriter(path + "\\" + folder + "\\documents.txt", true));
             for (Map.Entry<String, StringBuilder> doc : docPost.entrySet())
-                outputfile.println(doc.getValue());
+                outputfile.println(Strings.padEnd(doc.getValue().toString(),50,' '));
             outputfile.close();
         } catch (IOException e) {
         }

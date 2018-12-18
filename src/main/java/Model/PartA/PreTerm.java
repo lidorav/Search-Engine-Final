@@ -7,6 +7,11 @@ public class PreTerm {
     private boolean inTitle;
     private boolean atBeginOfDoc;
 
+    public PreTerm(String name){
+        this.name = name;
+        this.tf = 1;
+    }
+
     public PreTerm(String name, String docID, boolean atBegin,String title) {
         this.name = name;
         this.docID = docID;

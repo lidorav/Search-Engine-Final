@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +31,6 @@ public class Parser implements Runnable {
 
     /**
      * C'tor initialize the class parameters
-     *
      * @param bqA
      * @param bqB
      * @param toStemm
@@ -45,19 +45,24 @@ public class Parser implements Runnable {
         pattern = Pattern.compile("[ \\*\\#\\|\\&\\(\\)\\[\\]:\\;\\!\\?\\{\\}]|-{2}|((?=[a-zA-Z]?)/(?=[a-zA-Z]))|((?<=[a-zA-Z])/(?=[\\d]))|((?=[\\d]?)/(?<=[a-zA-Z]))");
     }
 
+    public Parser(boolean toStemm){
+        this.toStemm = toStemm;
+        porterStemmer = new PorterStemmer();
+        pattern = Pattern.compile("[ \\*\\#\\|\\&\\(\\)\\[\\]:\\;\\!\\?\\{\\}]|-{2}|((?=[a-zA-Z]?)/(?=[a-zA-Z]))|((?<=[a-zA-Z])/(?=[\\d]))|((?=[\\d]?)/(?<=[a-zA-Z]))");
+    }
     /**
      * run method of the working thread
      */
     public void run() {
         try {
             //consuming messages until exit message is received
-            while (!(doc = read_parse.take()).getFileName().equals("fin")) {
+            while(!(doc = read_parse.take()).getFileName().equals("fin")){
                 String docID = doc.getDocID();
                 String text = doc.getText();
-                parse(docID, text);
+                parse(docID,text,true);
                 doc.cleanText(tempDictionary);
-            }
-            indexer_parse.put(doc);
+                }
+                indexer_parse.put(doc);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,21 +70,22 @@ public class Parser implements Runnable {
 
     /**
      * main parse function
-     *
      * @param docID
      * @param text
      */
-    public void parse(String docID, String text) {
+    public void parse(String docID, String text, boolean toIndex) {
         tempDictionary = new ConcurrentHashMap<>();
         index = 0;
         Splitter splitter = Splitter.on(pattern).omitEmptyStrings();
         tokenList = new ArrayList<>(splitter.splitToList(text));
-        classify(docID);
-        updateDoc();
-        try {
-            indexer_parse.put(doc);
-        } catch (Exception e) {
-            e.printStackTrace();
+        classify(docID, toIndex);
+        if(toIndex) {
+            updateDoc();
+            try {
+                indexer_parse.put(doc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -89,7 +95,7 @@ public class Parser implements Runnable {
     private void updateDoc() {
         int currentMaxValue = Integer.MIN_VALUE;
         doc.setUniqueTf(tempDictionary.size());
-        for (PreTerm preTerm : tempDictionary.values()) {
+        for (PreTerm preTerm : tempDictionary.values()){
             if (preTerm.getTf() > currentMaxValue) {
                 currentMaxValue = preTerm.getTf();
             }
@@ -99,15 +105,17 @@ public class Parser implements Runnable {
 
     /**
      * main classify function of a text - to numbers or text tokens
-     *
      * @param docID
      */
-    private void classify(String docID) {
+    private void classify(String docID, boolean toIndex) {
         for (; index < tokenList.size(); index++) {
             String token = getTokenFromList(index);
-            if (token.isEmpty() || stopWord.isStopWord(token))
+            if (token.isEmpty())
                 continue;
-            if (toStemm) {
+            if(stopWord != null)
+                if(stopWord.isStopWord(token))
+                    continue;
+            if(toStemm) {
                 token = porterStemmer.stem(token);
                 porterStemmer.reset();
             }
@@ -115,19 +123,18 @@ public class Parser implements Runnable {
                 String term = numParse(token);
                 if (term.isEmpty())
                     term = ANumbers.parseNumber(index, token);
-                addTerm(term, docID);
+                addTerm(term, docID, toIndex);
             } else {
-                String term = letterParse(token);
+                String term =letterParse(token);
                 if (term.isEmpty()) {
                     term = Text.parseText(index, token);
                     if (term.isEmpty())
                         term = token;
                 }
-                addTerm(term, docID);
+                addTerm(term, docID, toIndex);
             }
         }
     }
-
 
     /**
      * aggregated numbers parsing rules function
@@ -195,15 +202,26 @@ public class Parser implements Runnable {
      * @param token
      * @param docID
      */
-    private void addTerm(String token, String docID) {
+    private void addTerm(String token, String docID, boolean toIndex) {
+        PreTerm term;
         boolean isAtBegin = false;
         token = cleanToken(token);
-        if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty() || stopWord.isStopWord(token))
+        if((token.length()==1 && !StringUtil.isNumeric(token)) || token.isEmpty())
             return;
-        checkCityInDoc(token);
-        if(index <= bound)
-            isAtBegin = true;
-        PreTerm term = new PreTerm(token, docID,isAtBegin,doc.getTitle());
+        if(stopWord != null) {
+            if (stopWord.isStopWord(token))
+                return;
+        }
+        if(toIndex) {
+            checkCityInDoc(token);
+            if (index <= bound) {
+                isAtBegin = true;
+            }
+             term = new PreTerm(token, docID, isAtBegin, doc.getTitle());
+        }
+        else{
+             term = new PreTerm(token);
+        }
         if (tempDictionary.containsKey(token))
             tempDictionary.get(token).increaseTf();
         else {
@@ -270,12 +288,12 @@ public class Parser implements Runnable {
         stopWord.clearStopWords();
     }
 
-
-   //public List<String> parseQuery(String query) {
-
-
-   //     }
-
-
+    public List<String> parseQuery(String query){
+        List<String> terms = new LinkedList<>();
+        parse("Q",query,false);
+        for (PreTerm preTerm:tempDictionary.values()) {
+            terms.add(preTerm.getName());
+        }
+        return terms;
     }
-
+}

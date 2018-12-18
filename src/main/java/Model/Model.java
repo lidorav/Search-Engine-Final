@@ -6,6 +6,7 @@ import Model.PartA.Index.Indexer;
 import Model.PartA.Parse.Parser;
 import Model.PartA.Read.ReadFile;
 import Model.PartB.ReadDoc;
+import Model.PartB.Searcher;
 
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
@@ -79,8 +80,6 @@ public class Model {
      * @return tree-map holding a sorted dictionary
      */
     public TreeMap showDictonary(){
-        ReadDoc rd = new ReadDoc("C:\\Users\\USER\\Desktop\\retrivel\\WORK\\Posting\\Stemmed\\documents.txt");
-        rd.readDoc();
         return Dictionary.getSorted();
     }
 
@@ -108,5 +107,13 @@ public class Model {
         instance = new Model();
         indexer = new Indexer(queueB,stemSelected,postingPath);
         return indexer.loadDictionary();
+    }
+
+
+    public void searchQuery(boolean selected, String postingPath, String query) {
+        /** Testing Query **/
+        Searcher searcher = new Searcher(postingPath,selected);
+        searcher.search(query);
+        searcher.printMap();
     }
 }

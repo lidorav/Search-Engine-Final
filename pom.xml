@@ -63,6 +63,12 @@
             <artifactId>lucene-core</artifactId>
             <version>7.5.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.14</version>
+        </dependency>
     </dependencies>
     
 </project>

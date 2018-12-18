@@ -45,6 +45,8 @@ public class Document {
         this.position= position;
         this.text = data;
         this.docID = docID;
+        this.maxTf = 0;
+        this.uniqueTf = 0;
         this.cityOccurence="";
     }
 

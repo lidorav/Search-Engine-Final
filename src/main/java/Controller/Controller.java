@@ -27,4 +27,8 @@ public class Controller {
     public String loadDictionary(boolean stemSelected, String postingPath) {
         return model.loadDictionary(stemSelected,postingPath);
     }
+
+    public void searchQuery(boolean selected, String postingPath, String query) {
+        model.searchQuery(selected,postingPath,query);
+    }
 }

@@ -3,13 +3,19 @@ package Model.PartB;
 
 import Model.PartA.Index.Dictionary;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.D;
+
 /**
  * class for ranking doc relevance
  */
 public class Ranker {
     //class field
     private String path;
-    private ReadDoc rd;
     private final double b=0.75;
     private final double k=2.0;
 
@@ -19,26 +25,34 @@ public class Ranker {
      */
     public Ranker(String path) {
         this.path = path;
-        this.rd = new ReadDoc(path);
-        rd.readDoc();
-
     }
 
     /**
      * ranking function
-     * @param queryTerms
+     * @param
      */
-    public double rank(String[] queryTerms, int N, double avgDl, String[] doc, int D){
+    public double rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID,int D) {
         // for each term in the query
         double rankResult = 0;
-        for (int i=0; i<queryTerms.length; i++){
-            int df = getDF(queryTerms[i]);
-            int tf = Integer.valueOf(doc[1]);
-            double idf = idf(N,df);
-            rankResult += (idf*tf*(k+1))/(tf+k*(1-b+b*(D/avgDl)));
+        Iterator<String> entries = keySet.iterator();
+        while (entries.hasNext()) {
+            String term = entries.next();
+            int df = getDF(term);
+            int tf = 0;
+            int titleFactor = 0;
+            int atTheBeginFactor = 0;
+            if (queryDocs.get(term).containsKey(docID)) {
+                titleFactor = Integer.valueOf(queryDocs.get(term).get(docID)[3]);
+                atTheBeginFactor = Integer.valueOf(queryDocs.get(term).get(docID)[4]);
+                tf = Integer.valueOf(queryDocs.get(term).get(docID)[2]);
+            }
+            double idf = idf(N, df);
+            double BM25 = (idf * tf * (k + 1)) / (tf + k * (1 - b + b * (D / avgDl)));
+            rankResult += BM25 + titleFactor * (BM25/2) + atTheBeginFactor *(BM25/4);
         }
         return rankResult;
     }
+
 
     /**
      *
@@ -59,7 +73,4 @@ public class Ranker {
     private int getDF(String term){
         return Dictionary.getDf(term);
     }
-
-
-
 }

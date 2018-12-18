@@ -135,7 +135,17 @@ public class Dictionary {
      * @return int ptr
      */
     public static int getPointer(String term){
-        return dictionary.get(term).getPtr();
+        if (dictionary.containsKey(term)) {
+            return dictionary.get(term).getPtr();
+        } else {
+            if (dictionary.containsKey(term.toUpperCase())) {
+                return dictionary.get(term.toUpperCase()).getPtr();
+            }
+            if (dictionary.containsKey(term.toLowerCase())) {
+                dictionary.get(term.toLowerCase()).getPtr();
+            }
+        }
+        return -1;
     }
 
     /**
@@ -143,8 +153,18 @@ public class Dictionary {
      * @param term
      * @return int df
      */
-    public static int getDf(String term){
-        return dictionary.get(term).getDf();
+    public static int getDf(String term) {
+        if (dictionary.containsKey(term)) {
+            return dictionary.get(term).getDf();
+        } else {
+            if (dictionary.containsKey(term.toUpperCase())) {
+                return dictionary.get(term.toUpperCase()).getDf();
+            }
+            if (dictionary.containsKey(term.toLowerCase())) {
+                dictionary.get(term.toLowerCase()).getDf();
+            }
+        }
+        return 0;
     }
 
     /**
