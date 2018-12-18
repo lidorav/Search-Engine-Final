@@ -30,6 +30,7 @@ public class Parser implements Runnable {
 
     /**
      * C'tor initialize the class parameters
+     *
      * @param bqA
      * @param bqB
      * @param toStemm
@@ -50,13 +51,13 @@ public class Parser implements Runnable {
     public void run() {
         try {
             //consuming messages until exit message is received
-            while(!(doc = read_parse.take()).getFileName().equals("fin")){
+            while (!(doc = read_parse.take()).getFileName().equals("fin")) {
                 String docID = doc.getDocID();
                 String text = doc.getText();
-                parse(docID,text);
+                parse(docID, text);
                 doc.cleanText(tempDictionary);
-                }
-                indexer_parse.put(doc);
+            }
+            indexer_parse.put(doc);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,6 +65,7 @@ public class Parser implements Runnable {
 
     /**
      * main parse function
+     *
      * @param docID
      * @param text
      */
@@ -87,7 +89,7 @@ public class Parser implements Runnable {
     private void updateDoc() {
         int currentMaxValue = Integer.MIN_VALUE;
         doc.setUniqueTf(tempDictionary.size());
-        for (PreTerm preTerm : tempDictionary.values()){
+        for (PreTerm preTerm : tempDictionary.values()) {
             if (preTerm.getTf() > currentMaxValue) {
                 currentMaxValue = preTerm.getTf();
             }
@@ -97,6 +99,7 @@ public class Parser implements Runnable {
 
     /**
      * main classify function of a text - to numbers or text tokens
+     *
      * @param docID
      */
     private void classify(String docID) {
@@ -104,7 +107,7 @@ public class Parser implements Runnable {
             String token = getTokenFromList(index);
             if (token.isEmpty() || stopWord.isStopWord(token))
                 continue;
-            if(toStemm) {
+            if (toStemm) {
                 token = porterStemmer.stem(token);
                 porterStemmer.reset();
             }
@@ -114,7 +117,7 @@ public class Parser implements Runnable {
                     term = ANumbers.parseNumber(index, token);
                 addTerm(term, docID);
             } else {
-                String term =letterParse(token);
+                String term = letterParse(token);
                 if (term.isEmpty()) {
                     term = Text.parseText(index, token);
                     if (term.isEmpty())
@@ -124,6 +127,7 @@ public class Parser implements Runnable {
             }
         }
     }
+
 
     /**
      * aggregated numbers parsing rules function
@@ -265,4 +269,13 @@ public class Parser implements Runnable {
     public void clear(){
         stopWord.clearStopWords();
     }
-}
+
+
+   //public List<String> parseQuery(String query) {
+
+
+   //     }
+
+
+    }
+
