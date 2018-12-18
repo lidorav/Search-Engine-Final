@@ -3,13 +3,14 @@ package Model.PartB;
 
 import Model.PartA.Index.Dictionary;
 
+import java.util.List;
+
 /**
  * class for ranking doc relevance
  */
 public class Ranker {
     //class field
     private String path;
-    private ReadDoc rd;
     private final double b=0.75;
     private final double k=2.0;
 
@@ -19,21 +20,18 @@ public class Ranker {
      */
     public Ranker(String path) {
         this.path = path;
-        this.rd = new ReadDoc(path);
-        rd.readDoc();
-
     }
 
     /**
      * ranking function
      * @param queryTerms
      */
-    public double rank(String[] queryTerms, int N, double avgDl, String[] doc, int D){
+    public double rank(List<String> queryTerms, int N, double avgDl, String[] doc, int D){
         // for each term in the query
         double rankResult = 0;
-        for (int i=0; i<queryTerms.length; i++){
-            int df = getDF(queryTerms[i]);
-            int tf = Integer.valueOf(doc[1]);
+        for (int i=0; i<queryTerms.size(); i++){
+            int df = getDF(queryTerms.get(i));
+            int tf = Integer.valueOf(doc[2]);
             double idf = idf(N,df);
             rankResult += (idf*tf*(k+1))/(tf+k*(1-b+b*(D/avgDl)));
         }

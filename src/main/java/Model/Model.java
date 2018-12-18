@@ -6,6 +6,7 @@ import Model.PartA.Index.Indexer;
 import Model.PartA.Parse.Parser;
 import Model.PartA.Read.ReadFile;
 import Model.PartB.ReadDoc;
+import Model.PartB.Searcher;
 
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
@@ -71,6 +72,11 @@ public class Model {
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
         res =  "Total Running Time: " + timeElapsed/1000000000 + "sec\n" + indexer.resultData();
+
+        /** Testing Query **/
+        Searcher searcher = new Searcher(postingPath,toStemm);
+        searcher.search("Falkland petroleum exploration");
+        searcher.printMap();
         return res;
     }
 
@@ -79,8 +85,6 @@ public class Model {
      * @return tree-map holding a sorted dictionary
      */
     public TreeMap showDictonary(){
-        ReadDoc rd = new ReadDoc("C:\\Users\\USER\\Desktop\\retrivel\\WORK\\Posting\\Stemmed\\documents.txt");
-        rd.readDoc();
         return Dictionary.getSorted();
     }
 

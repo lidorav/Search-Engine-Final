@@ -2,6 +2,9 @@ package Model.PartA.Index;
 
 import Model.PartA.Document;
 import Model.PartA.PreTerm;
+import com.google.gson.internal.LinkedTreeMap;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
@@ -13,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * the class connect between Dictionary class and Posting class
  */
 public class Indexer implements Runnable {
-    private TreeMap<String,StringBuilder> docPost;
+    private LinkedHashMap<String,StringBuilder> docPost;
     private TreeMap<String,StringBuilder> cityPost;
     private TreeMap<String, StringBuilder> tempPost;
     private BlockingQueue<Document> parser_indexer;
@@ -34,7 +37,7 @@ public class Indexer implements Runnable {
         tempPost = new TreeMap<>();
         cityPost = new TreeMap<>();
         dictionary = new Dictionary(postingPath, toStemm);
-        docPost = new TreeMap<>();
+        docPost = new LinkedHashMap<>();
         counter = new AtomicInteger(0);
         numOfDocsIndex = 0;
     }
@@ -58,7 +61,7 @@ public class Indexer implements Runnable {
                     if(i==5000) {
                         posting.initTempPosting(tempPost);
                         posting.writeDocIndex(docPost);
-                        docPost = new TreeMap<>();
+                        docPost = new LinkedHashMap<>();
                         tempPost = new TreeMap<>();
                         i=0;
                         counter.set(0);
@@ -71,11 +74,11 @@ public class Indexer implements Runnable {
                     }
                     if (isInTempPosting(entry.getKey())) {
                         StringBuilder sb = tempPost.get(entry.getKey());
-                        sb.append(preTerm.getDocID()).append(";").append(preTerm.getTf()).append(";").append(toChar(preTerm.getInTitle())).append(";").append(toChar(preTerm.getAtBeginOfDoc())).append(",");
+                        sb.append(preTerm.getDocID()).append(";").append(numOfDocsIndex).append(";").append(preTerm.getTf()).append(";").append(toChar(preTerm.getInTitle())).append(";").append(toChar(preTerm.getAtBeginOfDoc())).append(",");
                     } else {
                         //create new term in post
                         tempPost.put(entry.getKey(),
-                                new StringBuilder().append(preTerm.getDocID()).append(";").append(preTerm.getTf()).append(";").append(toChar(preTerm.getInTitle())).append(";").append(toChar(preTerm.getAtBeginOfDoc())).append(","));
+                                new StringBuilder().append(preTerm.getDocID()).append(";").append(numOfDocsIndex).append(";").append(preTerm.getTf()).append(";").append(toChar(preTerm.getInTitle())).append(";").append(toChar(preTerm.getAtBeginOfDoc())).append(","));
                     }
                     if (dictionary.isInDictionary(entry.getKey())) {
                         dictionary.updateTerm(preTerm);
@@ -90,7 +93,7 @@ public class Indexer implements Runnable {
         if(counter.get()>0) {
             posting.writeDocIndex(docPost);
             posting.initTempPosting(tempPost);
-            docPost = new TreeMap<>();
+            docPost = new LinkedHashMap<>();
             tempPost = new TreeMap<>();
         }
         posting.writeCityIndex(cityPost);
