@@ -1,11 +1,8 @@
 package Model.PartA.Index;
-
 import Model.PartA.Document;
 import Model.PartA.PreTerm;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Indexer implements Runnable {
     private LinkedHashMap<String,StringBuilder> docPost;
-    private TreeMap<String,StringBuilder> cityPost;
     private TreeMap<String, StringBuilder> tempPost;
     private BlockingQueue<Document> parser_indexer;
     private Dictionary dictionary;
@@ -34,7 +30,6 @@ public class Indexer implements Runnable {
         posting = new Posting(postingPath, toStemm);
         parser_indexer = bq;
         tempPost = new TreeMap<>();
-        cityPost = new TreeMap<>();
         dictionary = new Dictionary(postingPath, toStemm);
         docPost = new LinkedHashMap<>();
         counter = new AtomicInteger(0);
@@ -56,7 +51,6 @@ public class Indexer implements Runnable {
                 int i = counter.incrementAndGet();
                 numOfDocsIndex++;
                 addDocToDocIndex(doc);
-                addDocToCityIndex(doc);
                 for (Map.Entry<String, PreTerm> entry : tempDic.entrySet()) {
                     if(i==5000) {
                         posting.initTempPosting(tempPost);
@@ -91,32 +85,12 @@ public class Indexer implements Runnable {
             docPost = new LinkedHashMap<>();
             tempPost = new TreeMap<>();
         }
-        posting.writeCityIndex(cityPost);
+        posting.writeCityIndex();
         posting.mergePosting();
         printDic();
     }
 
-    /**
-     * Add the doc city to the city Tree-map data structure
-     * @param doc a given document object that contain city field
-     */
-    private void addDocToCityIndex(Document doc) {
-        String city = doc.getCity();
-        if(!city.isEmpty()) {
-            StringBuilder sb;
-            //if the tree-map contains the city then chain the doc info
-            if (cityPost.containsKey(city)){
-                sb = cityPost.get(city);
-                sb.append(doc.getDocID()).append("[").append(doc.getCityOccurence()).append("],");
-            }
-            //if the tree-map doesn't contain the city, add new.
-            else{
-                sb = new StringBuilder(doc.getDocID());
-                sb.append("[").append(doc.getCityOccurence()).append("],");
-                cityPost.put(city,sb);
-            }
-        }
-    }
+
     /**
      * Add the doc information to the documents Tree-map data structure
      * @param doc a given document object that contain information fields
@@ -145,7 +119,6 @@ public class Indexer implements Runnable {
      */
     public void deleteFiles() {
         docPost.clear();
-        cityPost.clear();
         tempPost.clear();
         posting.deletePosting();
         dictionary.clearDic();
