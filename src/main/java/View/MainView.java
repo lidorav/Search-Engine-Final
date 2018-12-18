@@ -2,6 +2,7 @@ package View;
 
 import Controller.Controller;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -11,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckComboBox;
 
 
 import java.io.BufferedReader;
@@ -19,7 +21,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class MainView implements Initializable {
 
@@ -35,6 +39,8 @@ public class MainView implements Initializable {
     private SplitPane mainWindow;
     @FXML
     private TextField query_txt;
+    @FXML
+    private CheckComboBox city_ccb;
 
     private Controller controller;
     private File root;
@@ -50,6 +56,16 @@ public class MainView implements Initializable {
         if (selectedDirectory != null){
                 corpus_txt.setText(selectedDirectory.getAbsolutePath());
             }
+    }
+
+    public void showCities(){
+        try {
+            ObservableList<String> observableList = FXCollections.observableArrayList();
+            Set<String> citySet = controller.getCities();
+            observableList.addAll(citySet);
+            city_ccb.getItems().addAll(observableList);
+        }catch (Exception e){
+        }
     }
 
     public void openPostingBrowser() {
@@ -158,5 +174,6 @@ public class MainView implements Initializable {
         getLanguages();
         SplitPane.Divider divider = mainWindow.getDividers().get(0);
         divider.positionProperty().addListener((observable, oldvalue, newvalue) -> divider.setPosition(0.1));
+        city_ccb.addEventHandler(ComboBox.ON_SHOWING,event -> showCities());
     }
 }
