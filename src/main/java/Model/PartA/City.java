@@ -2,8 +2,9 @@ package Model.PartA;
 
 import Model.PartA.Parse.ANumbers;
 import com.google.gson.*;
-import java.io.File;
-import java.io.FileReader;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,6 +36,8 @@ public class City {
    }
 
    public static boolean isCityInDoc(String term){
+       if(term.isEmpty())
+           return false;
        return(dataByCity.containsKey(term));
    }
     /**
@@ -85,4 +88,22 @@ public class City {
        cityOccurences.clear();
        dataByCity.clear();
    }
+
+    public static void loadFromFile(boolean stemSelected, String postingPath) {
+       String folder="notStemmed";
+       if(stemSelected)
+           folder = "Stemmed";
+        File file = new File(postingPath+"\\"+folder+"\\cities.txt");
+        try {
+            BufferedReader br = new BufferedReader( new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+            cityOccurences.clear();
+            String line, city;
+            while((line = br.readLine())!= null){
+                String[] parts = line.split("~");
+                city = parts[0];
+                cityOccurences.put(city,new HashMap<>());
+            }
+            br.close();
+        } catch (IOException e) {}
+    }
 }

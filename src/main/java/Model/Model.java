@@ -107,6 +107,7 @@ public class Model {
      */
     public String loadDictionary(boolean stemSelected, String postingPath) {
         instance = new Model();
+        City.loadFromFile(stemSelected,postingPath);
         indexer = new Indexer(queueB,stemSelected,postingPath);
         return indexer.loadDictionary();
     }
