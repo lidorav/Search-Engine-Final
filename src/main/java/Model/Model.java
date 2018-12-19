@@ -8,7 +8,9 @@ import Model.PartA.Parse.Parser;
 import Model.PartA.Read.ReadFile;
 import Model.PartB.ReadDoc;
 import Model.PartB.Searcher;
+import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
@@ -113,11 +115,12 @@ public class Model {
     }
 
 
-    public void searchQuery(boolean selected, String postingPath, String query) {
+    public void searchQuery(boolean selected, String postingPath, String query, ObservableList items) {
         /** Testing Query **/
         Searcher searcher = new Searcher(postingPath,selected);
-        searcher.search(query);
+        searcher.search(query,new ArrayList<String>(items));
         searcher.printMap();
+
     }
 
     public Set<String> getCities() {

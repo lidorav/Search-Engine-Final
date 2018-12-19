@@ -165,7 +165,7 @@ public class MainView implements Initializable {
         else if(postingPath.isEmpty())
             showErrorAlert("Posting Directory Not Found");
         else{
-            controller.searchQuery(stem_chk.isSelected(),postingPath,query);
+            controller.searchQuery(stem_chk.isSelected(),postingPath,query,city_ccb.getCheckModel().getCheckedItems());
         }
     }
 

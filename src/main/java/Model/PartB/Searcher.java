@@ -3,6 +3,7 @@ package Model.PartB;
 
 import Model.PartA.Index.Dictionary;
 import Model.PartA.Parse.Parser;
+import javafx.collections.ObservableList;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.FileNotFoundException;
@@ -30,10 +31,10 @@ public class Searcher {
 
     /**
      * Search
-     *
-     * @param query
+     *  @param query
+     * @param items
      */
-    public void search(String query) {
+    public void search(String query, ArrayList<String> items) {
         double rank = 0;
         int N = rd.getDocAmount();
         double avgDl = rd.getAvgDl();
@@ -45,7 +46,20 @@ public class Searcher {
                 docMap.put(entry.getKey(), rank);
             }
         }
+        filterByCity(items);
         getTopScore();
+    }
+
+    private void filterByCity(ArrayList<String> items) {
+        if(items.isEmpty())
+            return;
+        List<String> filterdDoc = rd.readCities(items);
+        HashMap<String,Double> filteredDocMap = new HashMap<>();
+        for(String doc:filterdDoc){
+            if(docMap.containsKey(doc))
+                filteredDocMap.put(doc,docMap.get(doc));
+        }
+        docMap = filteredDocMap;
     }
 
     private void initializeQueryMap(List<String> queryTerms) {

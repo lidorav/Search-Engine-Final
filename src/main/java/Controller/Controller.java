@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.Model;
+import javafx.collections.ObservableList;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -29,8 +30,8 @@ public class Controller {
         return model.loadDictionary(stemSelected,postingPath);
     }
 
-    public void searchQuery(boolean selected, String postingPath, String query) {
-        model.searchQuery(selected,postingPath,query);
+    public void searchQuery(boolean selected, String postingPath, String query, ObservableList items) {
+        model.searchQuery(selected,postingPath,query,items);
     }
 
     public Set<String> getCities() {

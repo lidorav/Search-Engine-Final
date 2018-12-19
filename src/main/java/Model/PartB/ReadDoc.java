@@ -2,7 +2,14 @@ package Model.PartB;
 
 
 
+import javafx.collections.ObservableList;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class that read a doc and extract the meta data
@@ -109,5 +116,48 @@ public class ReadDoc {
 
     public double getAvgDl() {
         return avgDl;
+    }
+
+    /**
+     * gets the relevant docs with a given cities set
+     * @param items
+     * @return
+     */
+    public List<String> readCities(ArrayList<String> items) {
+        BufferedReader br ;
+        List<String> listOfDocs = new LinkedList();
+        try {
+            br = new BufferedReader(new FileReader(path + "\\cities.txt"));
+            String sCurrentLine ;
+            while ((sCurrentLine = br.readLine()) != null) {
+                String cityToCheck = StringUtils.substringBefore(sCurrentLine, "~");
+                if(items.isEmpty())
+                    break;
+                //for each city the user has chosen
+                for (String item :items ) {
+                    if(cityToCheck.equals(item)){
+                        concatDoc(sCurrentLine,listOfDocs);
+                        items.remove(item);
+                        break;
+                    }
+                }
+            }br.close();
+        }catch (IOException io){
+
+        }
+        return listOfDocs;
+    }
+
+    /**
+     * cut the string docs to get just docID
+     * @param sLine
+     * @param listOfDocs
+     */
+    private void concatDoc (String sLine, List<String> listOfDocs){
+        String[] docsWithNumbers = sLine.split("\\|");
+        for (int i=1;i<docsWithNumbers.length;i++){
+            listOfDocs.add(StringUtils.substringBefore(docsWithNumbers[i],"["));
+        }
+
     }
 }

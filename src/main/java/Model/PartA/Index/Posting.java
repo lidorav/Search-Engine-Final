@@ -210,11 +210,11 @@ public class Posting {
         ConcurrentHashMap<String,HashMap<String,StringBuilder>> cities = City.getCityOccurences();
         for (Map.Entry<String,HashMap<String,StringBuilder>> city : cities.entrySet()
         ) {
-            String line = city.getKey()+ "~" + City.getCityInfo(city.getKey()) + "~";
+            String line = city.getKey()+ "~" + City.getCityInfo(city.getKey()) + "~|";
             for (Map.Entry<String, StringBuilder> entry : city.getValue().entrySet()) {
                 line = line + entry.getKey() + "[" + entry.getValue() + "]|";
             }
-            if(line.charAt(line.length()-1)=='~'){
+            if(line.charAt(line.length()-2)=='~' && line.charAt(line.length()-1)=='|'){
                 City.removeUnUsed(city.getKey());
             }
             else {
