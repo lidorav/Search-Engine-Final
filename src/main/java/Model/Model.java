@@ -10,6 +10,7 @@ import Model.PartB.ReadDoc;
 import Model.PartB.Searcher;
 import javafx.collections.ObservableList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
@@ -127,5 +128,9 @@ public class Model {
 
     public Set<String> getDocResults() {
         return searcher.getResults();
+    }
+
+    public String saveResults(File selectedDirectory) {
+        return searcher.printMap(selectedDirectory);
     }
 }

@@ -14,7 +14,7 @@
             <ListView fx:id="resView" prefHeight="400.0" prefWidth="294.0" />
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Button mnemonicParsing="false" text="Save" />
+                  <Button onAction="#saveResults" mnemonicParsing="false" text="Save" />
                </children>
             </VBox>
          </children>

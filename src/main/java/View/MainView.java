@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class MainView implements Initializable {
+public class MainView extends AView implements Initializable {
 
     @FXML
     private TextField corpus_txt;
@@ -88,19 +88,6 @@ public class MainView implements Initializable {
         }
     }
 
-    private void showErrorAlert(String stringAlert){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error Message");
-        alert.setContentText(stringAlert);
-        alert.showAndWait();
-    }
-
-    private void showInformationAlert(String stringAlert){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information Message");
-        alert.setContentText(stringAlert);
-        alert.show();
-    }
 
     public void showDictionary() {
         try {

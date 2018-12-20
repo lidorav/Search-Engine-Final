@@ -6,6 +6,7 @@ import Model.PartA.Parse.Parser;
 import javafx.collections.ObservableList;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -87,23 +88,25 @@ public class Searcher {
 
     /**
      * print
+     * @param selectedDirectory
      */
-    public void printMap() {
+    public String printMap(File selectedDirectory) {
         int i=0;
         int bounder=50;
         PrintWriter outputfile = null;
         try {
-            outputfile = new PrintWriter("test");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            outputfile = new PrintWriter(selectedDirectory + "\\results.txt");
+            for (Map.Entry<String, Double> entry : docMap.entrySet()) {
+                if (i >= bounder)
+                    break;
+                outputfile.println("351 1000 " + entry.getKey() + " " + entry.getValue() + " 42.0 mt");
+                i++;
+            }
+            outputfile.close();
+            return "Saved Successfully";
+        }catch (Exception e){
+            return "Error in Saving";
         }
-        for (Map.Entry<String, Double> entry : docMap.entrySet()) {
-            if(i>=bounder)
-                break;
-            outputfile.println("351 1000 "+entry.getKey()+" "+entry.getValue()+" 42.0 mt");
-            i++;
-        }
-        outputfile.close();
     }
 
     /**

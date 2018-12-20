@@ -3,6 +3,7 @@ package Controller;
 import Model.Model;
 import javafx.collections.ObservableList;
 
+import java.io.File;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -40,5 +41,9 @@ public class Controller {
 
     public Set<String> getDocResults(){
         return model.getDocResults();
+    }
+
+    public String saveResults(File selectedDirectory) {
+        return model.saveResults(selectedDirectory);
     }
 }
