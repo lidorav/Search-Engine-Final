@@ -25,6 +25,7 @@ public class Model {
     private Indexer indexer;
     private ReadFile reader;
     private Parser parser;
+    private Searcher searcher;
 
     private static Model instance;
 
@@ -116,14 +117,15 @@ public class Model {
 
 
     public void searchQuery(boolean selected, String postingPath, String query, ObservableList items) {
-        /** Testing Query **/
-        Searcher searcher = new Searcher(postingPath,selected);
+        searcher = new Searcher(postingPath,selected);
         searcher.search(query,new ArrayList<String>(items));
-        searcher.printMap();
-
     }
 
     public Set<String> getCities() {
         return City.getCityList();
+    }
+
+    public Set<String> getDocResults() {
+        return searcher.getResults();
     }
 }

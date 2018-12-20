@@ -21,7 +21,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -123,6 +122,26 @@ public class MainView implements Initializable {
         }
     }
 
+    private void showDocResults(){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            Parent root = loader.load(getClass().getClassLoader().getResource("searchResults.fxml"));
+            Stage newWindow = new Stage();
+            newWindow.setTitle("Search Results");
+            newWindow.setScene(new Scene(root));
+            Main main = Main.getInstance();
+            // Specifies the modality for new window.
+            newWindow.initModality(Modality.WINDOW_MODAL);
+
+            // Specifies the owner Window (parent) for new window
+            newWindow.initOwner(main.getPrimaryStage());
+
+            newWindow.show();
+        }catch (IOException e) {
+            showErrorAlert("No Data");
+        }
+    }
+
     public void getLanguages() {
         ArrayList<String> arr = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(root.getAbsoluteFile()+"\\src\\main\\resources\\languages.txt"))) {
@@ -166,6 +185,7 @@ public class MainView implements Initializable {
             showErrorAlert("Posting Directory Not Found");
         else{
             controller.searchQuery(stem_chk.isSelected(),postingPath,query,city_ccb.getCheckModel().getCheckedItems());
+            showDocResults();
         }
     }
 

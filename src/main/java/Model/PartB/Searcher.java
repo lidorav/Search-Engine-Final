@@ -50,6 +50,10 @@ public class Searcher {
         getTopScore();
     }
 
+    /**
+     * create a new map that contains onky relevant key
+     * @param items
+     */
     private void filterByCity(ArrayList<String> items) {
         if(items.isEmpty())
             return;
@@ -132,4 +136,7 @@ public class Searcher {
         docMap = sorted;
     }
 
+    public Set<String> getResults() {
+        return docMap.keySet();
+    }
 }

@@ -36,6 +36,9 @@ public class Controller {
 
     public Set<String> getCities() {
        return model.getCities();
+    }
 
+    public Set<String> getDocResults(){
+        return model.getDocResults();
     }
 }
