@@ -31,8 +31,8 @@ public class Controller {
         return model.loadDictionary(stemSelected,postingPath);
     }
 
-    public void searchQuery(boolean selected, String postingPath, String query, ObservableList items) {
-        model.searchQuery(selected,postingPath,query,items);
+    public void searchQuery(boolean selected, boolean toEntity, String postingPath, String query, ObservableList items) {
+        model.searchQuery(selected,toEntity,postingPath,query,items);
     }
 
     public Set<String> getCities() {

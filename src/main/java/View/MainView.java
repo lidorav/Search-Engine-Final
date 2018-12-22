@@ -33,6 +33,8 @@ public class MainView extends AView implements Initializable {
     @FXML
     private CheckBox stem_chk;
     @FXML
+    private CheckBox entity_chk;
+    @FXML
     private ChoiceBox lang_box;
     @FXML
     private SplitPane mainWindow;
@@ -147,6 +149,7 @@ public class MainView extends AView implements Initializable {
     public void resetApp(){
         controller.resetApp();
         stem_chk.setSelected(false);
+        entity_chk.setSelected(false);
         corpus_txt.clear();
         posting_txt.clear();
     }
@@ -165,13 +168,14 @@ public class MainView extends AView implements Initializable {
     public void searchQuery(){
         String query = query_txt.getText();
         String postingPath = posting_txt.getText();
+        boolean toEntity = entity_chk.isSelected();
         if(query.isEmpty()){
             showErrorAlert("Query Is Empty");
         }
         else if(postingPath.isEmpty())
             showErrorAlert("Posting Directory Not Found");
         else{
-            controller.searchQuery(stem_chk.isSelected(),postingPath,query,city_ccb.getCheckModel().getCheckedItems());
+            controller.searchQuery(stem_chk.isSelected(),toEntity,postingPath,query,city_ccb.getCheckModel().getCheckedItems());
             showDocResults();
         }
     }

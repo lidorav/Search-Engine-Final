@@ -1,5 +1,6 @@
 package Model.PartA;
 
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,6 +19,7 @@ public class Document {
     private ConcurrentHashMap<String, PreTerm> termsInDoc;
     private String docID;
     private String cityOccurence;
+    private LinkedHashMap<String,Integer> entities;
 
     /**
      * C'tor create a document by a filename
@@ -48,6 +50,16 @@ public class Document {
         this.maxTf = 0;
         this.uniqueTf = 0;
         this.cityOccurence="";
+        entities = new LinkedHashMap<String, Integer>(){
+            {
+                put("1", Integer.MIN_VALUE);
+                put("2", Integer.MIN_VALUE);
+                put("3", Integer.MIN_VALUE);
+                put("4", Integer.MIN_VALUE);
+                put("5", Integer.MIN_VALUE);
+
+            }
+        };
     }
 
     /**
@@ -55,6 +67,21 @@ public class Document {
      */
     public String getLanguage() {
         return language;
+    }
+
+    /**
+     * a function that checks if the tf of a entity is maximum and replace with minimum value
+     * @param term
+     * @param tf
+     */
+    public void checkMaxEntity(String term, int tf){
+        Map.Entry<String, Integer> min = Collections.min(entities.entrySet(),
+                Comparator.comparing(Map.Entry::getValue));
+        if(tf > min.getValue()){
+            entities.remove(min.getKey());
+            entities.put(term,tf);
+        }
+
     }
 
     /**
@@ -130,8 +157,22 @@ public class Document {
     public StringBuilder getDocInfo(){
         StringBuilder sb = new StringBuilder();
         sb.append(docID).append(":").append(fileName).append(":").append(position)
-                .append(":").append(maxTf).append(":").append(uniqueTf);
+                .append(":").append(maxTf).append(":").append(uniqueTf).append(maxEntitiesResult());
         return sb;
+    }
+
+    /**
+     * a function that gives the final max entities
+     * @return
+     */
+    private String maxEntitiesResult(){
+        String res=":";
+        for (Map.Entry<String, Integer> set : entities.entrySet()) {
+            if(set.getValue() != Integer.MIN_VALUE){
+                res = res + set.getKey() + ":" ;
+            }
+        }
+        return res;
     }
 
     /**

@@ -20,11 +20,13 @@ public class Searcher {
     private Ranker ranker;
     private Parser parser;
     private ReadDoc rd;
+    private boolean toEntity;
 
-    public Searcher(String path, boolean toStemm) {
+    public Searcher(String path, boolean toEntity, boolean toStemm) {
         docMap = new HashMap<>();
         ranker = new Ranker(path);
         rd = new ReadDoc(path, toStemm);
+        this.toEntity = toEntity;
         rd.readDoc();
         parser = new Parser(toStemm);
         queryDocs = new HashMap<>();
@@ -32,7 +34,8 @@ public class Searcher {
 
     /**
      * Search
-     *  @param query
+     *
+     * @param query
      * @param items
      */
     public void search(String query, ArrayList<String> items) {
@@ -41,10 +44,15 @@ public class Searcher {
         double avgDl = rd.getAvgDl();
         List<String> queryTerms = parser.parseQuery(query);
         initializeQueryMap(queryTerms);
-        for(Map.Entry<String,HashMap<String,String[]>> mapEntry : queryDocs.entrySet()) {
+        for (Map.Entry<String, HashMap<String, String[]>> mapEntry : queryDocs.entrySet()) {
             for (Map.Entry<String, String[]> entry : mapEntry.getValue().entrySet()) {
-                rank = ranker.rank(N, avgDl,queryDocs.keySet(),queryDocs, entry.getKey(),Integer.valueOf(entry.getValue()[9]));
-                docMap.put(entry.getKey(), rank);
+                try {
+                    rank = ranker.rank(N, avgDl, queryDocs.keySet(), queryDocs, entry.getKey(), Integer.valueOf(entry.getValue()[9]));
+                    docMap.put(entry.getKey(), rank);
+                }catch (Exception e){
+                    for(int i=0;i<entry.getValue().length;i++)
+                        System.out.println(entry.getValue()[i]);
+                }
             }
         }
         filterByCity(items);
@@ -53,16 +61,17 @@ public class Searcher {
 
     /**
      * create a new map that contains onky relevant key
+     *
      * @param items
      */
     private void filterByCity(ArrayList<String> items) {
-        if(items.isEmpty())
+        if (items.isEmpty())
             return;
         List<String> filterdDoc = rd.readCities(items);
-        HashMap<String,Double> filteredDocMap = new HashMap<>();
-        for(String doc:filterdDoc){
-            if(docMap.containsKey(doc))
-                filteredDocMap.put(doc,docMap.get(doc));
+        HashMap<String, Double> filteredDocMap = new HashMap<>();
+        for (String doc : filterdDoc) {
+            if (docMap.containsKey(doc))
+                filteredDocMap.put(doc, docMap.get(doc));
         }
         docMap = filteredDocMap;
     }
@@ -74,12 +83,12 @@ public class Searcher {
                 continue;
             String[] doc = rd.readDocFromPosting(getFileName(queryTerms.get(i)), ptr);
             if (doc != null) {
-                queryDocs.put(queryTerms.get(i),new HashMap<>());
+                queryDocs.put(queryTerms.get(i), new HashMap<>());
                 for (int j = 0; j < doc.length; j++) {
                     String[] docParts = doc[j].split(";");
                     String[] docInfo = rd.readDocLine(Integer.valueOf(docParts[1]));
                     String[] both = ArrayUtils.addAll(docParts, docInfo);
-                    queryDocs.get(queryTerms.get(i)).put(docInfo[0],both);
+                    queryDocs.get(queryTerms.get(i)).put(docInfo[0], both);
                 }
             }
         }
@@ -88,11 +97,12 @@ public class Searcher {
 
     /**
      * print
+     *
      * @param selectedDirectory
      */
     public String printMap(File selectedDirectory) {
-        int i=0;
-        int bounder=50;
+        int i = 0;
+        int bounder = 50;
         PrintWriter outputfile = null;
         try {
             outputfile = new PrintWriter(selectedDirectory + "\\results.txt");
@@ -104,22 +114,24 @@ public class Searcher {
             }
             outputfile.close();
             return "Saved Successfully";
-        }catch (Exception e){
+        } catch (Exception e) {
             return "Error in Saving";
         }
     }
 
     /**
      * get pointer of a term in the posting file
+     *
      * @param term
      * @return int ptr
      */
-    private int getPointer (String term){
+    private int getPointer(String term) {
         return Dictionary.getPointer(term);
     }
 
     /**
      * Get the posting filename from a given term by calculating it's first character
+     *
      * @param term the line in the merged posting file
      * @return the filename the line is associated
      */
@@ -130,16 +142,31 @@ public class Searcher {
         return "symbol";
     }
 
-    private void getTopScore(){
+    private void getTopScore() {
         Map<String, Double> sorted = docMap
                 .entrySet()
                 .stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingDouble(e->e.getValue())))
+                .sorted(Collections.reverseOrder(Comparator.comparingDouble(e -> e.getValue())))
                 .collect(toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
         docMap = sorted;
     }
 
     public Set<String> getResults() {
-        return docMap.keySet();
+        String entities = "entities: ";
+        Set<String> res = new TreeSet<>();
+        if (toEntity) {
+            for (String str : docMap.keySet()) {
+                for (HashMap<String, String[]> map : queryDocs.values()) {
+                    if (map.containsKey(str)) {
+                        for (int i = 10; i < map.get(str).length; i++)
+                            entities = entities + "," + map.get(str)[i];
+                        res.add(str + " " + entities);
+                    }
+                }
+            }
+        } else {
+            res = docMap.keySet();
+        }
+        return res;
     }
 }

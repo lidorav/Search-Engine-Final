@@ -102,6 +102,8 @@ public class Parser implements Runnable {
             if (preTerm.getTf() > currentMaxValue) {
                 currentMaxValue = preTerm.getTf();
             }
+            if(StringUtils.isAllUpperCase(preTerm.getName()))
+                doc.checkMaxEntity(preTerm.getName(),preTerm.getTf());
         }
         doc.setMaxTf(currentMaxValue);
     }

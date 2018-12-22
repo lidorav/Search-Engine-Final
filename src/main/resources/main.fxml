@@ -64,12 +64,12 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </CheckBox>
-                        <ChoiceBox fx:id="lang_box" prefHeight="25.0" prefWidth="170.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <ChoiceBox fx:id="lang_box" prefHeight="25.0" prefWidth="170.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <GridPane.margin>
                               <Insets left="100.0" />
                            </GridPane.margin>
                         </ChoiceBox>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="91.0" text="Language:" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="91.0" text="Language:" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -110,6 +110,11 @@
                            </font>
                         </Label>
                         <CheckComboBox fx:id="city_ccb" onDragDetected="#showCities" prefHeight="25.0" prefWidth="206.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="entity_chk" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="Entities:" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </CheckBox>
                      </children>
                   </GridPane>
                </children>

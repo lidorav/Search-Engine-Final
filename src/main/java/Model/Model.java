@@ -117,8 +117,8 @@ public class Model {
     }
 
 
-    public void searchQuery(boolean selected, String postingPath, String query, ObservableList items) {
-        searcher = new Searcher(postingPath,selected);
+    public void searchQuery(boolean selected, boolean toEntity, String postingPath, String query, ObservableList items) {
+        searcher = new Searcher(postingPath,toEntity,selected);
         searcher.search(query,new ArrayList<String>(items));
     }
 
