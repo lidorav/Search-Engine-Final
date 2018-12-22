@@ -190,7 +190,7 @@ public class Posting {
         try {
             PrintWriter outputfile = new PrintWriter(new FileWriter(path + "\\" + folder + "\\documents.txt", true));
             for (Map.Entry<String, StringBuilder> doc : docPost.entrySet())
-                outputfile.println(Strings.padEnd(doc.getValue().toString(),50,' '));
+                outputfile.println(Strings.padEnd(doc.getValue().toString(),100,' '));
             outputfile.close();
         } catch (IOException e) {
         }

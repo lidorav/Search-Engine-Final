@@ -87,12 +87,23 @@ public class Searcher {
                 for (int j = 0; j < doc.length; j++) {
                     String[] docParts = doc[j].split(";");
                     String[] docInfo = rd.readDocLine(Integer.valueOf(docParts[1]));
-                    String[] both = ArrayUtils.addAll(docParts, docInfo);
+                    String[] both = concatArrays(docParts,docInfo);
                     queryDocs.get(queryTerms.get(i)).put(docInfo[0], both);
                 }
             }
         }
         rd.closeAccess();
+    }
+
+    private String[] concatArrays(String[] arrayA, String[] arrayB){
+        String[] res = new String[arrayA.length+arrayB.length];
+        for(int i=0;i<arrayA.length;i++){
+            res[i] = arrayA[i];
+        }
+        for(int j=0;j<arrayB.length;j++){
+            res[arrayA.length+j] = arrayB[j];
+        }
+        return res;
     }
 
     /**
@@ -152,15 +163,16 @@ public class Searcher {
     }
 
     public Set<String> getResults() {
-        String entities = "entities: ";
         Set<String> res = new TreeSet<>();
         if (toEntity) {
             for (String str : docMap.keySet()) {
+                String entities = "entities: ";
                 for (HashMap<String, String[]> map : queryDocs.values()) {
                     if (map.containsKey(str)) {
                         for (int i = 10; i < map.get(str).length; i++)
-                            entities = entities + "," + map.get(str)[i];
+                            entities = entities + map.get(str)[i] + ",";
                         res.add(str + " " + entities);
+                        break;
                     }
                 }
             }

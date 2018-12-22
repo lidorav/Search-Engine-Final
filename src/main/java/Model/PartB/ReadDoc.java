@@ -83,7 +83,7 @@ public class ReadDoc {
     }
 
     public String[] readDocLine(int ptr){
-        int offset = 52;
+        int offset = 102;
         byte[] bytes = new byte[offset];
         try {
             File file = new File(path+"\\documents.txt");
