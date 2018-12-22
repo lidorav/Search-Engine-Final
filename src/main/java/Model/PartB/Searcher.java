@@ -30,6 +30,8 @@ public class Searcher {
         rd.readDoc();
         parser = new Parser(toStemm);
         queryDocs = new HashMap<>();
+        ReadQuery rq = new ReadQuery("C:\\Users\\USER\\Desktop\\retrivel\\WORK\\queries.txt");
+        rq.read();
     }
 
     /**
