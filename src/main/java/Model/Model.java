@@ -6,14 +6,13 @@ import Model.PartA.Index.Dictionary;
 import Model.PartA.Index.Indexer;
 import Model.PartA.Parse.Parser;
 import Model.PartA.Read.ReadFile;
-import Model.PartB.ReadDoc;
+import Model.PartB.Query;
+import Model.PartB.ReadQuery;
 import Model.PartB.Searcher;
 import javafx.collections.ObservableList;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -133,4 +132,13 @@ public class Model {
     public String saveResults(File selectedDirectory) {
         return searcher.printMap(selectedDirectory);
     }
+
+    public void searchQueries(String queriesPath,String postingPath, boolean toEntity, boolean selected, ObservableList items){
+        ReadQuery rq = new ReadQuery(queriesPath);
+        List<Query> queries = rq.read();
+        searcher = new Searcher(postingPath,toEntity,selected);
+        searcher.searchList(queries,new ArrayList<String>(items));
+    }
+    
+    public HashMap<String, Set<String>> getMapResults(){return searcher.getQueriesResults();}
 }

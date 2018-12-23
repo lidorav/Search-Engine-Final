@@ -17,6 +17,7 @@ public class Searcher {
 
     private Map<String, Double> docMap;
     private HashMap<String, HashMap<String, String[]>> queryDocs;
+    private HashMap<String, Set<String>> queriesResults;
     private Ranker ranker;
     private Parser parser;
     private ReadDoc rd;
@@ -30,8 +31,6 @@ public class Searcher {
         rd.readDoc();
         parser = new Parser(toStemm);
         queryDocs = new HashMap<>();
-        ReadQuery rq = new ReadQuery("C:\\Users\\USER\\Desktop\\retrivel\\WORK\\queries.txt");
-        rq.read();
     }
 
     /**
@@ -122,8 +121,35 @@ public class Searcher {
             for (Map.Entry<String, Double> entry : docMap.entrySet()) {
                 if (i >= bounder)
                     break;
-                outputfile.println("351 1000 " + entry.getKey() + " " + entry.getValue() + " 42.0 mt");
+                outputfile.println("1 1 " + entry.getKey() + " 1 42.0 mt");
                 i++;
+            }
+            outputfile.close();
+            return "Saved Successfully";
+        } catch (Exception e) {
+            return "Error in Saving";
+        }
+    }
+
+    /**
+     *
+     * @param selectedDirectory
+     * @return
+     */
+    public String printMaps(File selectedDirectory) {
+        int i;
+        int bounder = 50;
+        PrintWriter outputfile = null;
+        try {
+            outputfile = new PrintWriter(selectedDirectory + "\\results.txt");
+            for (Map.Entry<String, Set<String>> entry : queriesResults.entrySet()) {
+                i=0;
+                for (String doc : entry.getValue()) {
+                    if (i >= bounder)
+                        break;
+                    outputfile.println(entry.getKey() + " 1 " + doc + " 1 42.0 mt");
+                    i++;
+                }
             }
             outputfile.close();
             return "Saved Successfully";
@@ -182,5 +208,18 @@ public class Searcher {
             res = docMap.keySet();
         }
         return res;
+    }
+
+    public void searchList(List<Query> queries, ArrayList<String> items) {
+        queriesResults = new HashMap<>();
+        for(Query query: queries){
+            search(query.getTitle(),items);
+            Set<String> docResults = getResults();
+            queriesResults.put(query.getQueryID(),docResults);
+        }
+    }
+
+    public HashMap<String,Set<String>> getQueriesResults(){
+        return queriesResults;
     }
 }
