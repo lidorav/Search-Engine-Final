@@ -116,8 +116,20 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </CheckBox>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="116.0" text="Queries:" textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
                      </children>
                   </GridPane>
+                  <HBox alignment="CENTER" layoutX="117.0" layoutY="153.0" prefHeight="68.0" prefWidth="368.0">
+                     <children>
+                        <TextField fx:id="queries_txt" prefHeight="25.0" prefWidth="309.0" />
+                        <Button fx:id="browse_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#loadQueries" text="Browse" />
+                        <Button fx:id="run_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" layoutX="315.0" layoutY="29.0" mnemonicParsing="false" onAction="#searchQueries" text="Run" />
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
         </items>
