@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="View.SearchView">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.SearchView">
    <children>
       <HBox layoutX="14.0" layoutY="23.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <ListView fx:id="resView" prefHeight="400.0" prefWidth="515.0" />
-            <VBox alignment="CENTER" prefHeight="400.0" prefWidth="96.0">
+            <VBox alignment="CENTER" prefHeight="400.0" prefWidth="369.0">
                <children>
+                  <ComboBox fx:id="query_id_btn" onAction="#selectQuery" prefWidth="150.0">
+                     <VBox.margin>
+                        <Insets bottom="50.0" />
+                     </VBox.margin>
+                  </ComboBox>
                   <Button mnemonicParsing="false" onAction="#saveResults" text="Save" />
                </children>
             </VBox>
