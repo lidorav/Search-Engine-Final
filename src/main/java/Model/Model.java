@@ -125,8 +125,10 @@ public class Model {
         return City.getCityList();
     }
 
-    public Set<String> getDocResults() {
-        return searcher.getResults();
+    public HashMap<String, Set<String>> getDocResults() {
+        HashMap<String,Set<String>> map = new HashMap<>();
+        map.put("1",searcher.getResults());
+        return map;
     }
 
     public String saveResults(File selectedDirectory) {

@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
@@ -42,6 +43,8 @@ public class MainView extends AView implements Initializable {
     private TextField query_txt;
     @FXML
     private CheckComboBox city_ccb;
+    @FXML
+    private TextField queries_txt;
 
     private Controller controller;
     private File root;
@@ -179,6 +182,30 @@ public class MainView extends AView implements Initializable {
             showDocResults();
         }
     }
+
+    public void loadQueries(){
+        FileChooser directoryChooser = new FileChooser();
+        File selectedFile = directoryChooser.showOpenDialog(new Stage());
+        if (selectedFile != null) {
+            queries_txt.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
+    public void searchQueries(){
+        String queryPath = queries_txt.getText();
+        String postingPath = posting_txt.getText();
+        boolean toEntity = entity_chk.isSelected();
+        if(queryPath.isEmpty()){
+            showErrorAlert("Query Path File Is Empty");
+        }
+        else if(postingPath.isEmpty())
+            showErrorAlert("Posting Directory Not Found");
+        else{
+            controller.searchQueries(stem_chk.isSelected(),toEntity,postingPath,queryPath,city_ccb.getCheckModel().getCheckedItems());
+            showDocResults();
+        }
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

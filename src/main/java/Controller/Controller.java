@@ -4,6 +4,7 @@ import Model.Model;
 import javafx.collections.ObservableList;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -39,11 +40,15 @@ public class Controller {
        return model.getCities();
     }
 
-    public Set<String> getDocResults(){
+    public Map<String, Set<String>> getDocResults(){
         return model.getDocResults();
     }
 
     public String saveResults(File selectedDirectory) {
         return model.saveResults(selectedDirectory);
+    }
+
+    public void searchQueries(boolean selected, boolean toEntity, String postingPath, String queryPath, ObservableList checkedItems) {
+        model.searchQueries(queryPath,postingPath,toEntity,selected,checkedItems);
     }
 }
