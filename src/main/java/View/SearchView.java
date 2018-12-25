@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class SearchView extends AView implements Initializable {
     private Controller controller;
-    private HashMap<String,Set<String>> docResults;
+    private Map<String, Set<String>> docResults;
     private final int BOUND = 50;
     @FXML
     private ListView resView;
@@ -34,8 +34,7 @@ public class SearchView extends AView implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ObservableList<String> observableList = FXCollections.observableArrayList();
-        Map<String, Set<String>> docResults = controller.getDocResults();
+        docResults = controller.getDocResults();
         for (String queryID : docResults.keySet()) {
             query_id_cmb.getItems().add(queryID);
         }
@@ -55,6 +54,7 @@ public class SearchView extends AView implements Initializable {
             else
                 break;
         }
+        resView.getItems().clear();
         resView.getItems().addAll(observableList);
     }catch (Exception e){}
     }

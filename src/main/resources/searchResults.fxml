@@ -20,7 +20,7 @@
                         <Insets bottom="50.0" />
                      </VBox.margin>
                   </ComboBox>
-                  <Button mnemonicParsing="false" onAction="#saveResults" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#saveResults" text="Save All" />
                </children>
             </VBox>
          </children>

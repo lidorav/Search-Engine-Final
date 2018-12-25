@@ -3,11 +3,13 @@ package Model.PartB;
 
 import Model.PartA.Index.Dictionary;
 import Model.PartA.Parse.Parser;
-import javafx.collections.ObservableList;
-import org.apache.commons.lang3.ArrayUtils;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import de.linguatools.disco.CorruptConfigFileException;
+import de.linguatools.disco.DISCO;
+import de.linguatools.disco.DISCOLuceneIndex;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -17,11 +19,12 @@ public class Searcher {
 
     private Map<String, Double> docMap;
     private HashMap<String, HashMap<String, String[]>> queryDocs;
-    private HashMap<String, Set<String>> queriesResults;
+    private TreeMap<String, Set<String>> queriesResults;
     private Ranker ranker;
     private Parser parser;
     private ReadDoc rd;
     private boolean toEntity;
+    private DISCO disco;
 
     public Searcher(String path, boolean toEntity, boolean toStemm) {
         docMap = new HashMap<>();
@@ -31,6 +34,16 @@ public class Searcher {
         rd.readDoc();
         parser = new Parser(toStemm);
         queryDocs = new HashMap<>();
+        loadSimFile();
+
+    }
+
+    private void loadSimFile(){
+        try {
+            disco = DISCO.load("C:\\Users\\nkutsky\\IdeaProjects\\Search-Engine-Final\\src\\main\\resources\\enwiki-20130403-word2vec-lm-mwl-lc-sim.denseMatrix");
+        }catch (IOException | CorruptConfigFileException e){
+            System.out.println(e.getStackTrace());
+        }
     }
 
     /**
@@ -40,10 +53,11 @@ public class Searcher {
      * @param items
      */
     public void search(String query, ArrayList<String> items) {
-        double rank = 0;
+        double rank;
         int N = rd.getDocAmount();
         double avgDl = rd.getAvgDl();
         List<String> queryTerms = parser.parseQuery(query);
+        addSemanticTerms(queryTerms);
         initializeQueryMap(queryTerms);
         for (Map.Entry<String, HashMap<String, String[]>> mapEntry : queryDocs.entrySet()) {
             for (Map.Entry<String, String[]> entry : mapEntry.getValue().entrySet()) {
@@ -75,6 +89,19 @@ public class Searcher {
                 filteredDocMap.put(doc, docMap.get(doc));
         }
         docMap = filteredDocMap;
+    }
+
+    private void addSemanticTerms(List<String>terms){
+        try {
+            for(String term:terms) {
+                if (Dictionary.checkExist(term)) {
+                    Map<String, Float> wordVector = disco.getWordvector(term);
+                    // get word embedding for "Haus" as float array
+                    for (Map.Entry<String, Float> entry : wordVector.entrySet())
+                        System.out.println(entry);
+                }
+            }
+        }catch (IOException e){}
     }
 
     private void initializeQueryMap(List<String> queryTerms) {
@@ -113,16 +140,16 @@ public class Searcher {
      * @param selectedDirectory
      */
     public String printMap(File selectedDirectory) {
-        int i = 0;
-        int bounder = 50;
         PrintWriter outputfile = null;
         try {
             outputfile = new PrintWriter(selectedDirectory + "\\results.txt");
             for (Map.Entry<String, Double> entry : docMap.entrySet()) {
-                if (i >= bounder)
-                    break;
-                outputfile.println("1 1 " + entry.getKey() + " 1 42.0 mt");
-                i++;
+                String doc;
+                if(entry.getKey().contains("entities"))
+                    doc = entry.getKey().substring(0,entry.getKey().indexOf(" "));
+                else
+                    doc = entry.getKey();
+                outputfile.println("1 1 " + doc + " 1 42.0 mt");
             }
             outputfile.close();
             return "Saved Successfully";
@@ -147,7 +174,9 @@ public class Searcher {
                 for (String doc : entry.getValue()) {
                     if (i >= bounder)
                         break;
-                    outputfile.println(entry.getKey() + " 1 " + doc + " 1 42.0 mt");
+                    if(doc.contains("entities"))
+                        doc = doc.substring(0,doc.indexOf(" "));
+                    outputfile.println(entry.getKey() + " 0 " + doc + " 0 0 mt");
                     i++;
                 }
             }
@@ -182,16 +211,26 @@ public class Searcher {
     }
 
     private void getTopScore() {
+        int i=0;
         Map<String, Double> sorted = docMap
                 .entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Comparator.comparingDouble(e -> e.getValue())))
                 .collect(toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
-        docMap = sorted;
+        LinkedHashMap<String,Double> top50 = new LinkedHashMap();
+        for(Map.Entry<String,Double> entry : sorted.entrySet()) {
+            if (i >= 50)
+                break;
+            else {
+                i++;
+                top50.put(entry.getKey(), entry.getValue());
+            }
+        }
+        docMap = top50;
     }
 
     public Set<String> getResults() {
-        Set<String> res = new TreeSet<>();
+        Set<String> res = new LinkedHashSet<>();
         if (toEntity) {
             for (String str : docMap.keySet()) {
                 String entities = "entities: ";
@@ -211,15 +250,14 @@ public class Searcher {
     }
 
     public void searchList(List<Query> queries, ArrayList<String> items) {
-        queriesResults = new HashMap<>();
+        queriesResults = new TreeMap<>();
         for(Query query: queries){
-            search(query.getTitle(),items);
+            search(query.getTitle() + " " + query.getDescription(),items);
             Set<String> docResults = getResults();
             queriesResults.put(query.getQueryID(),docResults);
         }
     }
 
-    public HashMap<String,Set<String>> getQueriesResults(){
-        return queriesResults;
+    public TreeMap<String,Set<String>> getQueriesResults(){ return queriesResults;
     }
 }

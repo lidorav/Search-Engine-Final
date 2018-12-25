@@ -1,13 +1,8 @@
 package Model.PartB;
 
-
-
-import javafx.collections.ObservableList;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 

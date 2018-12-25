@@ -48,7 +48,7 @@ public class Ranker {
             }
             double idf = idf(N, df);
             double BM25 = (idf * tf * (k + 1)) / (tf + k * (1 - b + b * (D / avgDl)));
-            rankResult += BM25 + titleFactor * (BM25/2) + atTheBeginFactor *(BM25/4);
+            rankResult += BM25 + (titleFactor * (BM25/2)) + (atTheBeginFactor *(BM25/4));
         }
         return rankResult;
     }

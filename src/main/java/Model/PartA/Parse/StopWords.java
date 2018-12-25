@@ -18,7 +18,7 @@ public class StopWords {
      * C'tor initialize the class parameters and opens a file that contains the stop word
      * @param path
      */
-    StopWords(String path)  {
+    public StopWords(String path)  {
         Scanner file = null;
         try {
             file = new Scanner(new File(path+"\\stop_words.txt"));

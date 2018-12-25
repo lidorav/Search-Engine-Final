@@ -297,7 +297,7 @@ public class Parser implements Runnable {
         List<String> terms = new LinkedList<>();
         parse("Q",query,false);
         for (PreTerm preTerm:tempDictionary.values()) {
-            terms.add(preTerm.getName());
+                terms.add(preTerm.getName());
         }
         return terms;
     }

@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="css/main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.MainView">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.MainView">
    <children>
       <SplitPane fx:id="mainWindow" dividerPositions="0.08793969849246232" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -50,6 +50,18 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="455.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <TextField fx:id="queries_txt" prefHeight="25.0" prefWidth="309.0" />
+                              <Button fx:id="browse_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#loadQueries" text="Browse" />
+                              <Button fx:id="run_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" layoutX="315.0" layoutY="29.0" mnemonicParsing="false" onAction="#searchQueries" text="Run" />
+                           </children>
+                        </HBox>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="116.0" text="Queries File:" textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="116.0" text="Corpus Path:" textFill="WHITE" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                            <font>
                               <Font name="System Bold" size="15.0" />
@@ -82,13 +94,13 @@
                         <Button fx:id="submit_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#runEngine" text="Submit" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
                         <Button alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#showDictionary" text="Show dictionary" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
                         <Button alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#loadDictionary" text="Load dictionary" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <HBox alignment="CENTER" prefHeight="68.0" prefWidth="368.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER" prefHeight="39.0" prefWidth="464.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <TextField fx:id="posting_txt" prefHeight="25.0" prefWidth="309.0" />
                               <Button fx:id="posting_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openPostingBrowser" text="Browse" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER" prefHeight="68.0" prefWidth="368.0" GridPane.columnIndex="1">
+                        <HBox alignment="CENTER" prefHeight="39.0" prefWidth="464.0" GridPane.columnIndex="1">
                            <children>
                               <TextField fx:id="corpus_txt" prefHeight="25.0" prefWidth="309.0" />
                               <Button fx:id="corpus_btn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openCorpusBrowser" text="Browse" />
@@ -99,7 +111,7 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER" prefHeight="68.0" prefWidth="368.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="455.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <TextField fx:id="query_txt" prefHeight="25.0" prefWidth="309.0" />
                               <Button fx:id="search_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchQuery" text="Search" />
@@ -116,20 +128,8 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </CheckBox>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="28.0" prefWidth="116.0" text="Queries:" textFill="WHITE" GridPane.rowIndex="4">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
                      </children>
                   </GridPane>
-                  <HBox alignment="CENTER" layoutX="117.0" layoutY="153.0" prefHeight="68.0" prefWidth="368.0">
-                     <children>
-                        <TextField fx:id="queries_txt" prefHeight="25.0" prefWidth="309.0" />
-                        <Button fx:id="browse_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" onAction="#loadQueries" text="Browse" />
-                        <Button fx:id="run_btn" alignment="TOP_RIGHT" contentDisplay="CENTER" layoutX="315.0" layoutY="29.0" mnemonicParsing="false" onAction="#searchQueries" text="Run" />
-                     </children>
-                  </HBox>
                </children>
             </AnchorPane>
         </items>

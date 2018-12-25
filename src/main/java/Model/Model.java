@@ -26,6 +26,7 @@ public class Model {
     private ReadFile reader;
     private Parser parser;
     private Searcher searcher;
+    private boolean isSingleQuery;
 
     private static Model instance;
 
@@ -109,7 +110,6 @@ public class Model {
      * @return a string that indicates if the loading was successful or not.
      */
     public String loadDictionary(boolean stemSelected, String postingPath) {
-        instance = new Model();
         City.loadFromFile(stemSelected,postingPath);
         indexer = new Indexer(queueB,stemSelected,postingPath);
         return indexer.loadDictionary();
@@ -117,6 +117,7 @@ public class Model {
 
 
     public void searchQuery(boolean selected, boolean toEntity, String postingPath, String query, ObservableList items) {
+        isSingleQuery = true;
         searcher = new Searcher(postingPath,toEntity,selected);
         searcher.search(query,new ArrayList<String>(items));
     }
@@ -125,22 +126,29 @@ public class Model {
         return City.getCityList();
     }
 
-    public HashMap<String, Set<String>> getDocResults() {
-        HashMap<String,Set<String>> map = new HashMap<>();
-        map.put("1",searcher.getResults());
-        return map;
+    public TreeMap<String, Set<String>> getDocResults() {
+        if(isSingleQuery) {
+            TreeMap<String, Set<String>> map = new TreeMap<>();
+            map.put("1", searcher.getResults());
+            return map;
+        }
+        else{
+            return searcher.getQueriesResults();
+        }
     }
 
     public String saveResults(File selectedDirectory) {
-        return searcher.printMap(selectedDirectory);
+        if(isSingleQuery)
+            return searcher.printMap(selectedDirectory);
+        else
+            return searcher.printMaps(selectedDirectory);
     }
 
     public void searchQueries(String queriesPath,String postingPath, boolean toEntity, boolean selected, ObservableList items){
+        isSingleQuery = false;
         ReadQuery rq = new ReadQuery(queriesPath);
         List<Query> queries = rq.read();
         searcher = new Searcher(postingPath,toEntity,selected);
         searcher.searchList(queries,new ArrayList<String>(items));
     }
-    
-    public HashMap<String, Set<String>> getMapResults(){return searcher.getQueriesResults();}
 }
