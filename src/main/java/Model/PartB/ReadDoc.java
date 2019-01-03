@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class that read a doc and extract the meta data
+ * Class that responsible for reading from the disk the files needed for the ranking process
  */
 public class ReadDoc {
     private String path;
@@ -16,8 +16,9 @@ public class ReadDoc {
     private RandomAccessFile fileStore;
 
     /**
-     * c'tor
-     * @param path
+     * C'tor for creating ReadDoc object
+     * @param path the path for the posting folder
+     * @param toStemm a boolean to decide if to stem or not
      */
     public ReadDoc(String path, boolean toStemm) {
         String folder;
@@ -30,7 +31,7 @@ public class ReadDoc {
     }
 
     /**
-     * read doc files and extract meta data
+     * Calculate the documents size and average length by accessing the documents file
      */
     public void readDoc() {
         String[] parts;
@@ -53,10 +54,10 @@ public class ReadDoc {
     }
 
     /**
-     * find the line in the posting file for a given term
-     * @param fileName
-     * @param line
-     * @return split array per doc
+     * Retrieve documents list from the posting file from a given line number
+     * @param fileName the posting file name
+     * @param line the line number in the posting file
+     * @return array of all documents ID's in the line
      */
     public String[] readDocFromPosting(String fileName, int line) {
         int counterLine = 1;
@@ -77,6 +78,11 @@ public class ReadDoc {
         return null;
     }
 
+    /**
+     * Retrieve the document information from the documents file by a given ptr to the line
+     * @param ptr the line number
+     * @return string array contains the document information
+     */
     public String[] readDocLine(int ptr){
         int offset = 102;
         byte[] bytes = new byte[offset];
@@ -98,6 +104,9 @@ public class ReadDoc {
 
     }
 
+    /**
+     * close the connection to the posting file
+     */
     public void closeAccess(){
         try {
             fileStore.close();
@@ -105,18 +114,24 @@ public class ReadDoc {
     }
 
 
+    /**
+     * @return the documents size
+     */
     public int getDocAmount() {
         return docAmount;
     }
 
+    /**
+     * @return the documents average length
+     */
     public double getAvgDl() {
         return avgDl;
     }
 
     /**
      * gets the relevant docs with a given cities set
-     * @param items
-     * @return
+     * @param items a list of chosen cities
+     * @return a list of docs associated with the given cities.
      */
     public List<String> readCities(ArrayList<String> items) {
         BufferedReader br ;
@@ -145,8 +160,8 @@ public class ReadDoc {
 
     /**
      * cut the string docs to get just docID
-     * @param sLine
-     * @param listOfDocs
+     * @param sLine A line of the posting file
+     * @param listOfDocs a list of relevant docs need to be ranked
      */
     private void concatDoc (String sLine, List<String> listOfDocs){
         String[] docsWithNumbers = sLine.split("\\|");

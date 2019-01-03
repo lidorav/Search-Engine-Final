@@ -8,17 +8,23 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * class for ranking doc relevance
+ * Class that responsible in the mathematical process of ranking the document by it relevance to the given query
  */
 public class Ranker {
     //class field
-    private final double b=0.2;
-    private final double k=0.3;
+    private final double b=0.2; // influence the ranking process
+    private final double k=0.3; // influence the ranking process
 
 
     /**
-     * ranking function
-     * @param
+     * Compute the ranking of a given document and a given query by a set of mathematical rules
+     * @param N - the number of documents in the corpus
+     * @param avgDl - the average length of all documents
+     * @param keySet - a set of all query terms
+     * @param queryDocs - HashMap with all the data of the documents
+     * @param docID - the ID of the document being ranked
+     * @param D the length of the document being ranked
+     * @return the document rank as a decimal number
      */
     public float rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID,int D) {
         // for each term in the query
@@ -47,7 +53,7 @@ public class Ranker {
      * Calculate IDF for a term in the corpus
      * @param N size of documents in the corpus
      * @param df the number of shows the term appear in the corpus
-     * @return
+     * @return the idf score as decimal number
      */
     public float idf(int N, int df){
         return (float) Math.log((N-df+0.5)/(df+0.5));
@@ -56,8 +62,8 @@ public class Ranker {
 
     /**
      * get df number of a term in the corpus
-     * @param term
-     * @return int df
+     * @param term a given term from the query
+     * @return the DF for the term
      */
     private int getDF(String term){
         return Dictionary.getDf(term);
