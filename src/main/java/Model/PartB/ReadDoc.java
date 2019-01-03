@@ -59,7 +59,7 @@ public class ReadDoc {
      * @return split array per doc
      */
     public String[] readDocFromPosting(String fileName, int line) {
-        int counterLine = 0;
+        int counterLine = 1;
         try {
             BufferedReader br = new BufferedReader(new FileReader(path + "\\" + fileName));
             String sCurrentLine;

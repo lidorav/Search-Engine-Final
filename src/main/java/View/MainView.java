@@ -36,6 +36,8 @@ public class MainView extends AView implements Initializable {
     @FXML
     private CheckBox entity_chk;
     @FXML
+    private CheckBox semant_chk;
+    @FXML
     private ChoiceBox lang_box;
     @FXML
     private SplitPane mainWindow;
@@ -155,6 +157,7 @@ public class MainView extends AView implements Initializable {
         entity_chk.setSelected(false);
         corpus_txt.clear();
         posting_txt.clear();
+        showInformationAlert("Reset Successfully");
     }
 
     public void loadDictionary(){
@@ -172,13 +175,14 @@ public class MainView extends AView implements Initializable {
         String query = query_txt.getText();
         String postingPath = posting_txt.getText();
         boolean toEntity = entity_chk.isSelected();
+        boolean toSemant = semant_chk.isSelected();
         if(query.isEmpty()){
             showErrorAlert("Query Is Empty");
         }
         else if(postingPath.isEmpty())
             showErrorAlert("Posting Directory Not Found");
         else{
-            controller.searchQuery(stem_chk.isSelected(),toEntity,postingPath,query,city_ccb.getCheckModel().getCheckedItems());
+            controller.searchQuery(stem_chk.isSelected(),toEntity,toSemant,postingPath,query,city_ccb.getCheckModel().getCheckedItems());
             showDocResults();
         }
     }
@@ -195,13 +199,14 @@ public class MainView extends AView implements Initializable {
         String queryPath = queries_txt.getText();
         String postingPath = posting_txt.getText();
         boolean toEntity = entity_chk.isSelected();
+        boolean toSemant = semant_chk.isSelected();
         if(queryPath.isEmpty()){
             showErrorAlert("Query Path File Is Empty");
         }
         else if(postingPath.isEmpty())
             showErrorAlert("Posting Directory Not Found");
         else{
-            controller.searchQueries(stem_chk.isSelected(),toEntity,postingPath,queryPath,city_ccb.getCheckModel().getCheckedItems());
+            controller.searchQueries(stem_chk.isSelected(),toEntity,toSemant,postingPath,queryPath,city_ccb.getCheckModel().getCheckedItems());
             showDocResults();
         }
     }

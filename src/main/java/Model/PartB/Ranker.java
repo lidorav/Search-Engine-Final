@@ -5,35 +5,24 @@ import Model.PartA.Index.Dictionary;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType.D;
 
 /**
  * class for ranking doc relevance
  */
 public class Ranker {
     //class field
-    private String path;
-    private final double b=0.75;
-    private final double k=2.0;
+    private final double b=0.2;
+    private final double k=0.3;
 
-    /**
-     * c'tor
-     * @param path
-     */
-    public Ranker(String path) {
-        this.path = path;
-    }
 
     /**
      * ranking function
      * @param
      */
-    public double rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID,int D) {
+    public float rank(int N, double avgDl, Set<String> keySet, HashMap<String, HashMap<String, String[]>> queryDocs, String docID,int D) {
         // for each term in the query
-        double rankResult = 0;
+        float rankResult = 0;
         Iterator<String> entries = keySet.iterator();
         while (entries.hasNext()) {
             String term = entries.next();
@@ -46,22 +35,22 @@ public class Ranker {
                 atTheBeginFactor = Integer.valueOf(queryDocs.get(term).get(docID)[4]);
                 tf = Integer.valueOf(queryDocs.get(term).get(docID)[2]);
             }
-            double idf = idf(N, df);
-            double BM25 = (idf * tf * (k + 1)) / (tf + k * (1 - b + b * (D / avgDl)));
-            rankResult += BM25 + (titleFactor * (BM25/2)) + (atTheBeginFactor *(BM25/4));
+            float idf = idf(N, df);
+            float BM25 = (float) ((idf * tf * (k + 1)) / (tf + k * (1 - b + (b * (D / avgDl)))));
+            rankResult += (BM25 +(titleFactor * (BM25)) + (atTheBeginFactor *(BM25/2)));
         }
         return rankResult;
     }
 
 
     /**
-     *
-     * @param N
-     * @param df
+     * Calculate IDF for a term in the corpus
+     * @param N size of documents in the corpus
+     * @param df the number of shows the term appear in the corpus
      * @return
      */
-    public double idf(int N, int df){
-        return Math.log10((N-df+0.5)/(df+0.5));
+    public float idf(int N, int df){
+        return (float) Math.log((N-df+0.5)/(df+0.5));
     }
 
 

@@ -32,8 +32,8 @@ public class Controller {
         return model.loadDictionary(stemSelected,postingPath);
     }
 
-    public void searchQuery(boolean selected, boolean toEntity, String postingPath, String query, ObservableList items) {
-        model.searchQuery(selected,toEntity,postingPath,query,items);
+    public void searchQuery(boolean selected, boolean toEntity,boolean toSemant, String postingPath, String query, ObservableList items) {
+        model.searchQuery(selected,toEntity,toSemant,postingPath,query,items);
     }
 
     public Set<String> getCities() {
@@ -48,7 +48,7 @@ public class Controller {
         return model.saveResults(selectedDirectory);
     }
 
-    public void searchQueries(boolean selected, boolean toEntity, String postingPath, String queryPath, ObservableList checkedItems) {
-        model.searchQueries(queryPath,postingPath,toEntity,selected,checkedItems);
+    public void searchQueries(boolean selected, boolean toEntity,boolean toSemant, String postingPath, String queryPath, ObservableList checkedItems) {
+        model.searchQueries(queryPath,postingPath,toEntity,selected,toSemant,checkedItems);
     }
 }

@@ -141,16 +141,16 @@ public class Posting {
             for(char ch='a';ch<='z';ch++){
                 File fileTo = new File(path + "\\" + folder + "\\" + ch);
                 buffers.put(String.valueOf(ch),new MutablePair<>(new BufferedWriter
-                        (new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(0)));
+                        (new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(1)));
             }
             for(int i=0;i<=9;i++){
                 File fileTo = new File(path + "\\" + folder + "\\" + i);
                 buffers.put(String.valueOf(i),new MutablePair<>(new BufferedWriter
-                        (new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(0)));
+                        (new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(1)));
             }
 
             File fileTo = new File(path + "\\" + folder + "\\symbol");
-            buffers.put("symbol",new MutablePair<>(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(0)));
+            buffers.put("symbol",new MutablePair<>(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTo), StandardCharsets.UTF_8)),new AtomicInteger(1)));
 
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileFrom), StandardCharsets.UTF_8));
             String line;

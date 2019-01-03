@@ -142,7 +142,7 @@ public class Dictionary {
                 return dictionary.get(term.toUpperCase()).getPtr();
             }
             if (dictionary.containsKey(term.toLowerCase())) {
-                dictionary.get(term.toLowerCase()).getPtr();
+                return dictionary.get(term.toLowerCase()).getPtr();
             }
         }
         return -1;

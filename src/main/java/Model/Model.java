@@ -116,9 +116,9 @@ public class Model {
     }
 
 
-    public void searchQuery(boolean selected, boolean toEntity, String postingPath, String query, ObservableList items) {
+    public void searchQuery(boolean selected, boolean toEntity,boolean toSemant, String postingPath, String query, ObservableList items) {
         isSingleQuery = true;
-        searcher = new Searcher(postingPath,toEntity,selected);
+        searcher = new Searcher(postingPath,toEntity,selected,toSemant);
         searcher.search(query,new ArrayList<String>(items));
     }
 
@@ -144,11 +144,11 @@ public class Model {
             return searcher.printMaps(selectedDirectory);
     }
 
-    public void searchQueries(String queriesPath,String postingPath, boolean toEntity, boolean selected, ObservableList items){
+    public void searchQueries(String queriesPath,String postingPath, boolean toEntity, boolean selected,boolean toSemant, ObservableList items){
         isSingleQuery = false;
         ReadQuery rq = new ReadQuery(queriesPath);
         List<Query> queries = rq.read();
-        searcher = new Searcher(postingPath,toEntity,selected);
+        searcher = new Searcher(postingPath,toEntity,selected,toSemant);
         searcher.searchList(queries,new ArrayList<String>(items));
     }
 }
